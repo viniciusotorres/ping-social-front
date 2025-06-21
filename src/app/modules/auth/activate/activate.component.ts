@@ -50,24 +50,31 @@ export class ActivateComponent implements OnInit {
   }
 
   moveFocus(event: any, currentIndex: number) {
-    const input = event.target;
-    const nextIndex = currentIndex + 1;
-    const prevIndex = currentIndex - 1;
+    const input = event.target as HTMLInputElement;
 
-    if (input.value.length === 1 && nextIndex < 4) {
-      const nextControl = this.activateForm.get('digit' + (nextIndex + 1));
-      if (nextControl) {
-        document.getElementById('digit' + (nextIndex + 1))?.focus();
-      }
+
+    if (input.value && input.value.length === 1) {
+      const nextInput = document.querySelector<HTMLInputElement>(`input[formControlName='digit${currentIndex + 2}']`);
+      if (nextInput) nextInput.focus();
     }
 
-    if (event.key === 'Backspace' && input.value.length === 0 && prevIndex >= 0) {
-      const prevControl = this.activateForm.get('digit' + (prevIndex + 1));
-      if (prevControl) {
-        document.getElementById('digit' + (prevIndex + 1))?.focus();
-      }
+    if (event.key === 'Backspace' && !input.value) {
+      const prevInput = document.querySelector<HTMLInputElement>(`input[formControlName='digit${currentIndex}']`);
+      if (prevInput) prevInput.focus();
     }
   }
+
+  handleBackspace(event: KeyboardEvent, currentIndex: number) {
+    const input = event.target as HTMLInputElement;
+    if (event.key === 'Backspace' && input.value === '') {
+      const prevInput = document.querySelector<HTMLInputElement>(
+        `input[formControlName='digit${currentIndex}']`
+      );
+      if (prevInput) prevInput.focus();
+    }
+  }
+
+
 
   onPaste(event: ClipboardEvent) {
     event.preventDefault();

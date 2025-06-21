@@ -17,5 +17,14 @@ export const authRoutes: Routes = [
   {
     path: 'activate',
     loadComponent: () => import('./activate/activate.component').then(m => m.ActivateComponent)
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
   }
+
 ];

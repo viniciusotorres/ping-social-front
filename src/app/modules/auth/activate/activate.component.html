@@ -26,7 +26,8 @@
                    maxlength="1"
                    class="w-12 h-12 text-center text-xl border rounded-lg bg-gray-700 text-gray-100"
                    [formControlName]="'digit' + (idx + 1)"
-                   (keyup)="moveFocus($event, idx)"
+                   (input)="moveFocus($event, idx)"
+                   (keydown)="handleBackspace($event, idx)"
                    (paste)="onPaste($event)">
           </div>
           <small *ngIf="errorMessage" class="text-red-500 block text-center mt-2">{{errorMessage}}</small>
