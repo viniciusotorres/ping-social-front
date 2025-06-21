@@ -3,9 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "build": "node_modules/.bin/ng build --configuration production",
-    "start": "node server.js",
-    "postinstall": "npm install && npm run build",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

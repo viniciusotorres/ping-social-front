@@ -19,6 +19,7 @@
           "options": {
             "outputPath": "dist/ping-social",
             "index": "src/index.html",
+            "baseHref": "./",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
