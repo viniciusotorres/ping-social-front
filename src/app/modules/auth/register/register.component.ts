@@ -35,6 +35,8 @@ import {ToastrService} from 'ngx-toastr';
 export class RegisterComponent {
   isLoading = false;
   registerForm: FormGroup;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,

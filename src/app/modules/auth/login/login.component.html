@@ -8,12 +8,14 @@
     </div>
 
     <!-- Card de login -->
-    <div class="w-full max-w-md mt-[4rem] md:mt-0 relative z-10 md:z-auto m-4 bg-gray-800 shadow-lg rounded-lg p-4">
-      <div class="text-center mb-4">
+    <div class="w-full max-w-md mt-[4rem] md:mt-0 relative z-10 md:z-auto m-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 shadow-2xl rounded-2xl p-6">
+      <div class="text-center mb-6">
         <img src="https://png.pngtree.com/png-vector/20220704/ourmid/pngtree-illustration-of-stylized-african-mask-png-image_5558159.png"
-             alt="Logo" class="w-[6rem] h-[6rem] mx-auto mb-2">
-        <h2 class="text-xl font-bold text-gray-100">Entre na sua Tribo</h2>
-        <p class="text-gray-400 mt-1">Estamos felizes que você voltou! Faça login e conecte-se com sua tribo.</p>
+             alt="Logo" class="w-20 h-20 mx-auto mb-4 animate-pulse">
+        <h2 class="text-3xl font-extrabold text-white tracking-wide">Entre na <span class="text-yellow-400">Tribe</span></h2>
+        <p class="text-yellow-300 mt-2 text-lg font-light">
+          Faça login e conecte-se com sua tribo para compartilhar, colaborar e crescer.
+        </p>
       </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -31,17 +33,42 @@
         </div>
 
         <!-- Senha -->
-        <div class="mb-3">
+        <div class="mb-3 relative">
           <label for="password" class="block text-gray-300 mb-1">Senha</label>
-          <input type="password" id="password" formControlName="password"
-                 class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
-                 placeholder="Digite sua senha"
-                 [ngClass]="{'border-red-500': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}">
-          <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-red-500 block">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100 pr-10"
+            placeholder="Digite sua senha"
+            [ngClass]="{'border-red-500': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}">
+
+          <!-- Ícone de olho -->
+          <button type="button"
+                  (click)="showPassword = !showPassword"
+                  class="absolute right-3 top-[2.3rem] text-gray-400 hover:text-gray-200 focus:outline-none"
+                  tabindex="-1"
+                  aria-label="Toggle password visibility">
+            <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.971 9.971 0 012.964-4.334m3.415-2.487a9.959 9.959 0 016.408 1.775M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 3l18 18" />
+            </svg>
+          </button>
+
+          <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-red-500 block mt-1">
             <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória.</span>
             <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres.</span>
           </small>
         </div>
+
 
         <!-- Esqueceu a senha -->
         <div class="flex justify-between mb-4">

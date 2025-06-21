@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
@@ -24,9 +24,11 @@ import {finalize} from 'rxjs';
   ],
   templateUrl: './login.component.html'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
   isLoading = false;
   loginForm: FormGroup;
+  showPassword = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -39,6 +41,17 @@ export class LoginComponent {
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.toastr.warning(
+        'Bem-vindo! Esta é uma versão de teste, por favor envie seu feedback.',
+        'Atenção'
+      );
+    }, 1000);
+  }
+
+
 
   onSubmit() {
     if (this.loginForm.invalid) {

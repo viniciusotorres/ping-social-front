@@ -8,14 +8,13 @@
            class="w-full h-full object-cover opacity-50">
     </div>
 
-    <!-- Card de registro -->
-    <div class="w-full max-w-md mt-[4rem] md:mt-0 relative z-10 md:z-auto m-4 bg-gray-800 shadow-lg rounded-lg p-4">
-      <div class="text-center mb-4">
+    <!-- Card de registro aprimorado -->
+    <div class="w-full max-w-md mt-[4rem] md:mt-0 relative z-10 md:z-auto m-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 shadow-2xl rounded-2xl p-6">
+      <div class="text-center mb-6">
         <img
           src="https://png.pngtree.com/png-vector/20220704/ourmid/pngtree-illustration-of-stylized-african-mask-png-image_5558159.png"
-          alt="Logo" class="w-[6rem] h-[6rem] mx-auto mb-2">
-        <h2 class="text-xl font-bold text-gray-100">Junte-se à nossa Tribo</h2>
-        <p class="text-gray-400 mt-1">Crie sua conta e comece sua jornada conosco.</p>
+          alt="Logo" class="w-20 h-20 mx-auto mb-4 animate-pulse">
+        <h2 class="text-3xl font-extrabold text-white tracking-wide">Junte-se à <span class="text-yellow-400">Tribe</span></h2>
       </div>
 
       <form [formGroup]="registerForm">
@@ -34,42 +33,93 @@
         </div>
 
         <!-- Senha -->
-        <div class="mb-3">
+        <div class="mb-3 relative">
           <label for="password" class="block text-gray-300 mb-1">Senha</label>
-          <input type="password" id="password" formControlName="password"
-                 class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
-                 placeholder="Digite sua senha"
-                 [ngClass]="{'border-red-500': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
-          <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-                 class="text-red-500 block">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100 pr-10"
+            placeholder="Digite sua senha"
+            [ngClass]="{'border-red-500': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}"
+          />
+          <button
+            type="button"
+            (click)="showPassword = !showPassword"
+            class="absolute right-3 top-[2.3rem] text-gray-400 hover:text-gray-200 focus:outline-none"
+            tabindex="-1"
+            aria-label="Alternar visibilidade da senha"
+          >
+            <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.971 9.971 0 012.964-4.334m3.415-2.487a9.959 9.959 0 016.408 1.775M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 3l18 18" />
+            </svg>
+          </button>
+          <small
+            *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+            class="text-red-500 block"
+          >
             <span *ngIf="registerForm.get('password')?.errors?.['required']">Senha é obrigatória.</span>
-            <span
-              *ngIf="registerForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres.</span>
+            <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres.</span>
           </small>
         </div>
 
         <!-- Confirmar Senha -->
-        <div class="mb-3">
+        <div class="mb-3 relative">
           <label for="confirmPassword" class="block text-gray-300 mb-1">Confirmar Senha</label>
-          <input type="password" id="confirmPassword" formControlName="confirmPassword"
-                 class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
-                 placeholder="Confirme sua senha"
-                 [ngClass]="{'border-red-500': registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched}">
-
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100 pr-10"
+            placeholder="Confirme sua senha"
+            [ngClass]="{'border-red-500': registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched}"
+          />
+          <button
+            type="button"
+            (click)="showConfirmPassword = !showConfirmPassword"
+            class="absolute right-3 top-[2.3rem] text-gray-400 hover:text-gray-200 focus:outline-none"
+            tabindex="-1"
+            aria-label="Alternar visibilidade da confirmação de senha"
+          >
+            <svg *ngIf="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <svg *ngIf="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.971 9.971 0 012.964-4.334m3.415-2.487a9.959 9.959 0 016.408 1.775M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 3l18 18" />
+            </svg>
+          </button>
           <!-- Erro campo confirmPassword vazio -->
           <small
             *ngIf="registerForm.get('confirmPassword')?.errors?.['required'] && registerForm.get('confirmPassword')?.touched"
-            class="text-red-500 block">
+            class="text-red-500 block"
+          >
             Confirmação de senha é obrigatória.
           </small>
 
-
-          <!-- Erro mismatch no grupo, só mostrar se confirmPassword já foi tocado -->
-          <small *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched"
-                 class="text-red-500 block">
+          <!-- Erro mismatch no grupo -->
+          <small
+            *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched"
+            class="text-red-500 block"
+          >
             As senhas não coincidem.
           </small>
         </div>
+
 
         <!-- Termos e Condições -->
         <div class="flex items-center mb-4">

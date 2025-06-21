@@ -1,7 +1,7 @@
 <!-- Navbar fixa -->
 <nav class="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 shadow z-50">
   <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-gray-800 dark:text-white"> <-> </h1>
+    <h1 class="text-xl font-bold text-gray-800 dark:text-white">the tribe</h1>
     <button
       class="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg transition"
       (click)="logout()"
@@ -11,9 +11,26 @@
   </div>
 </nav>
 
-<!-- Conteúdo abaixo da navbar -->
-<div class="max-w-2xl mx-auto pt-20 px-4">
-  <!-- Post fixado do Admin -->
+<!-- Conteúdo principal -->
+<div class="max-w-2xl mx-auto pt-24 px-4">
+  <!-- Campo de novo post -->
+  <div class="bg-white dark:bg-gray-800 shadow p-4 rounded-xl mb-6">
+    <h3 class="text-md font-semibold text-gray-800 dark:text-gray-100 mb-2">Criar novo post</h3>
+    <textarea
+      rows="3"
+      class="w-full p-3 border rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white resize-none"
+      placeholder="Compartilhe algo com a comunidade... (em breve)"
+      disabled
+    ></textarea>
+    <button
+      class="mt-2 bg-blue-500 text-white text-sm px-4 py-2 rounded-lg opacity-50 cursor-not-allowed"
+      disabled
+    >
+      Postar
+    </button>
+  </div>
+
+  <!-- Post fixado 1: Boas-vindas -->
   <div class="bg-white dark:bg-gray-800 border-l-4 border-blue-500 shadow p-5 rounded-xl mb-6">
     <div class="flex items-center mb-2">
       <div class="bg-blue-500 text-white font-bold px-3 py-1 text-sm rounded-full mr-2">Admin</div>
@@ -28,8 +45,43 @@
     </p>
   </div>
 
-  <!-- Outros posts futuros -->
-  <div class="text-center text-gray-400 text-sm mt-10">
-    Mais atualizações serão exibidas aqui futuramente...
+  <!-- Post fixado 2: Reset de senha em andamento -->
+  <div class="bg-white dark:bg-gray-800 border-l-4 border-yellow-500 shadow p-5 rounded-xl mb-6">
+    <div class="flex items-center mb-2">
+      <div class="bg-yellow-500 text-white font-bold px-3 py-1 text-sm rounded-full mr-2">Admin</div>
+      <span class="text-gray-600 dark:text-gray-300 text-sm">Post fixado • 21 de Junho de 2025, 16:45</span>
+    </div>
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Funcionalidade de recuperação de senha em andamento
+    </h2>
+    <p class="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
+      Estamos desenvolvendo as funcionalidades de "Esqueci minha senha" e "Redefinir senha". Em breve estarão disponíveis.
+      Agradecemos pela paciência e pelo apoio contínuo enquanto aprimoramos a plataforma!
+    </p>
   </div>
-</div>
+
+  <!-- Footer com sugestão -->
+  <footer class="mt-12 bg-gray-100 dark:bg-gray-800 py-6">
+    <div class="max-w-2xl mx-auto px-4">
+      <h4 class="text-center text-gray-800 dark:text-white font-semibold mb-2">
+        💡 Este campo é MUITO IMPORTANTE!
+      </h4>
+      <p class="text-center text-sm text-gray-600 dark:text-gray-300 mb-3">
+        Aqui você pode sugerir o que gostaria de ver nesta rede social. Sua opinião é essencial para moldar o futuro da plataforma!
+      </p>
+      <textarea
+        rows="2"
+        class="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white resize-none"
+        placeholder="Sua sugestão aqui..."
+      ></textarea>
+      <div class="text-center mt-3">
+        <button
+          class="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-lg"
+          disabled
+        >
+          Enviar Sugestão (em breve)
+        </button>
+      </div>
+    </div>
+  </footer>
+
