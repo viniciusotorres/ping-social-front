@@ -3,20 +3,22 @@
   <div class="flex items-center justify-center w-full md:w-1/2 relative h-full">
     <!-- Background mobile -->
     <div class="absolute inset-0 md:hidden">
-      <img src="https://w0.peakpx.com/wallpaper/518/101/HD-wallpaper-native-pattern-abstract-colors.jpg" alt="Background"
+      <img src="https://w0.peakpx.com/wallpaper/518/101/HD-wallpaper-native-pattern-abstract-colors.jpg"
+           alt="Background"
            class="w-full h-full object-cover opacity-50">
     </div>
 
     <!-- Card de registro -->
     <div class="w-full max-w-md mt-[4rem] md:mt-0 relative z-10 md:z-auto m-4 bg-gray-800 shadow-lg rounded-lg p-4">
       <div class="text-center mb-4">
-        <img src="https://png.pngtree.com/png-vector/20220704/ourmid/pngtree-illustration-of-stylized-african-mask-png-image_5558159.png"
-             alt="Logo" class="w-[6rem] h-[6rem] mx-auto mb-2">
+        <img
+          src="https://png.pngtree.com/png-vector/20220704/ourmid/pngtree-illustration-of-stylized-african-mask-png-image_5558159.png"
+          alt="Logo" class="w-[6rem] h-[6rem] mx-auto mb-2">
         <h2 class="text-xl font-bold text-gray-100">Junte-se à nossa Tribo</h2>
         <p class="text-gray-400 mt-1">Crie sua conta e comece sua jornada conosco.</p>
       </div>
 
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="registerForm">
         <!-- Email -->
         <div class="mb-3">
           <label for="email" class="block text-gray-300 mb-1">Email</label>
@@ -24,7 +26,8 @@
                  class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
                  placeholder="Digite seu email"
                  [ngClass]="{'border-red-500': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
-          <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-red-500 block">
+          <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+                 class="text-red-500 block">
             <span *ngIf="registerForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
             <span *ngIf="registerForm.get('email')?.errors?.['email']">Email inválido.</span>
           </small>
@@ -37,9 +40,11 @@
                  class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
                  placeholder="Digite sua senha"
                  [ngClass]="{'border-red-500': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
-          <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-red-500 block">
+          <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+                 class="text-red-500 block">
             <span *ngIf="registerForm.get('password')?.errors?.['required']">Senha é obrigatória.</span>
-            <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres.</span>
+            <span
+              *ngIf="registerForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres.</span>
           </small>
         </div>
 
@@ -50,9 +55,19 @@
                  class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
                  placeholder="Confirme sua senha"
                  [ngClass]="{'border-red-500': registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched}">
-          <small *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="text-red-500 block">
-            <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Confirmação de senha é obrigatória.</span>
-            <span *ngIf="registerForm.hasError('mismatch')">As senhas não coincidem.</span>
+
+          <!-- Erro campo confirmPassword vazio -->
+          <small
+            *ngIf="registerForm.get('confirmPassword')?.errors?.['required'] && registerForm.get('confirmPassword')?.touched"
+            class="text-red-500 block">
+            Confirmação de senha é obrigatória.
+          </small>
+
+
+          <!-- Erro mismatch no grupo, só mostrar se confirmPassword já foi tocado -->
+          <small *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched"
+                 class="text-red-500 block">
+            As senhas não coincidem.
           </small>
         </div>
 
@@ -60,15 +75,30 @@
         <div class="flex items-center mb-4">
           <input type="checkbox" id="terms" formControlName="terms"
                  class="w-4 h-4 text-blue-500 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
-          <label for="terms" class="ml-2 text-gray-300">Eu concordo com os <a href="#" class="text-blue-400 hover:underline">Termos e Condições</a></label>
-          <small *ngIf="registerForm.get('terms')?.invalid && registerForm.get('terms')?.touched" class="text-red-500 block">
-            Você deve aceitar os termos e condições.
-          </small>
+          <label for="terms" class="ml-2 text-gray-300">Eu concordo com os <a href="#"
+                                                                              class="text-blue-400 hover:underline">Termos
+            e Condições</a></label>
+
         </div>
 
         <!-- Botão de registro -->
-        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-                [disabled]="registerForm.invalid">Criar Conta</button>
+        <button
+          (click)="onSubmit()"
+          type="submit"
+          class="w-full py-2 rounded-lg
+          text-white
+          bg-blue-500
+          hover:bg-blue-600
+          disabled:bg-gray-400
+          disabled:cursor-not-allowed"
+          [disabled]="registerForm.invalid || !registerForm.get('terms')?.value"
+        >
+          Criar Conta
+        </button>
+        <small *ngIf="registerForm.get('terms')?.invalid && registerForm.get('terms')?.touched"
+               class="text-red-500 block">
+          Você deve aceitar os termos e condições.
+        </small>
 
         <!-- Login -->
         <div class="text-center mt-4">

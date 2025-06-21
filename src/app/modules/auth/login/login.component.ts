@@ -6,6 +6,9 @@ import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
+import {LoginService} from '../services/login-service/login.service';
+import {ToastrService} from 'ngx-toastr';
+import {finalize} from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +30,9 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private loginService: LoginService,
+    private toastr: ToastrService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -42,13 +47,32 @@ export class LoginComponent {
     }
 
     this.isLoading = true;
-    // Simulação de chamada API
-    setTimeout(() => {
-      this.isLoading = false;
-      // Lógica de autenticação aqui
-      this.router.navigate(['/dashboard']);
-    }, 1500);
+    const { email, password } = this.loginForm.value;
+
+    this.loginService.login(email, password)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (res) => {
+          if (res.token) {
+            localStorage.setItem('authToken', res.token);
+            this.toastr.success('Login efetuado com sucesso!', 'Success');
+            this.router.navigate(['/internal']);
+          } else if (res.message) {
+            this.toastr.info(res.message, 'Atenção');
+            localStorage.setItem('email', res.email);
+            this.router.navigate(['auth/activate']);
+          } else {
+            this.toastr.warning('Resposta inesperada do servidor.', 'Aviso');
+            console.warn('Resposta inesperada:', res);
+          }
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.message || 'Falha no login. Tente novamente.', 'Erro');
+          console.error('Erro no login:', err);
+        }
+      });
   }
+
 
   goToForgotPassword() {
     this.router.navigate(['/forgot-password']);

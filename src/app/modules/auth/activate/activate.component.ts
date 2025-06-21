@@ -6,6 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { MessageService } from 'primeng/api';
+import {ActivateService} from '../services/activate-service/activate.service';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-activate',
@@ -31,7 +33,9 @@ export class ActivateComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private activateService: ActivateService,
+    private toastr: ToastrService
   ) {
     this.activateForm = this.fb.group({
       digit1: ['', [Validators.required, Validators.pattern('[0-9]')]],
@@ -42,8 +46,7 @@ export class ActivateComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Obter e-mail da rota ou do estado de navegação
-    this.email = this.route.snapshot.queryParams['email'] || 'seu@email.com';
+    this.email = localStorage.getItem('email') || '';
   }
 
   moveFocus(event: any, currentIndex: number) {
@@ -51,7 +54,6 @@ export class ActivateComponent implements OnInit {
     const nextIndex = currentIndex + 1;
     const prevIndex = currentIndex - 1;
 
-    // Mover para o próximo campo se um dígito foi inserido
     if (input.value.length === 1 && nextIndex < 4) {
       const nextControl = this.activateForm.get('digit' + (nextIndex + 1));
       if (nextControl) {
@@ -59,7 +61,6 @@ export class ActivateComponent implements OnInit {
       }
     }
 
-    // Mover para o campo anterior se backspace foi pressionado e o campo está vazio
     if (event.key === 'Backspace' && input.value.length === 0 && prevIndex >= 0) {
       const prevControl = this.activateForm.get('digit' + (prevIndex + 1));
       if (prevControl) {
@@ -96,31 +97,26 @@ export class ActivateComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const activationCode = this.getActivationCode();
+    const code = this.getActivationCode();
 
-    // Simulação de chamada API para verificar o código
-    setTimeout(() => {
-      this.isLoading = false;
-
-      if (activationCode === '1234') { // Código mockado para teste
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Sucesso',
-          detail: 'Conta ativada com sucesso!'
-        });
+    this.activateService.activate(this.email, code).subscribe({
+      next: (res) => {
+        this.toastr.success('Conta ativada com sucesso!', 'Sucesso');
+        localStorage.removeItem('email');
         this.router.navigate(['/dashboard']);
-      } else {
-        this.errorMessage = 'Código inválido. Por favor, tente novamente.';
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.message || 'Falha ao ativar a conta. Tente novamente.', 'Erro');
         this.activateForm.reset();
         document.getElementById('digit1')?.focus();
-      }
-    }, 1500);
+      },
+      complete: () => this.isLoading = false
+    });
   }
 
   resendCode() {
     this.isLoading = true;
 
-    // Simulação de reenvio de código
     setTimeout(() => {
       this.isLoading = false;
       this.messageService.add({

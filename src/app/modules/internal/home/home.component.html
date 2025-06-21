@@ -1,0 +1,35 @@
+<!-- Navbar fixa -->
+<nav class="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 shadow z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-gray-800 dark:text-white"> <-> </h1>
+    <button
+      class="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg transition"
+      (click)="logout()"
+    >
+      Logout
+    </button>
+  </div>
+</nav>
+
+<!-- Conteúdo abaixo da navbar -->
+<div class="max-w-2xl mx-auto pt-20 px-4">
+  <!-- Post fixado do Admin -->
+  <div class="bg-white dark:bg-gray-800 border-l-4 border-blue-500 shadow p-5 rounded-xl mb-6">
+    <div class="flex items-center mb-2">
+      <div class="bg-blue-500 text-white font-bold px-3 py-1 text-sm rounded-full mr-2">Admin</div>
+      <span class="text-gray-600 dark:text-gray-300 text-sm">Post fixado • 21 de Junho de 2025</span>
+    </div>
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Bem-vindo à primeira versão do sistema!
+    </h2>
+    <p class="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
+      Essa é uma versão inicial em desenvolvimento. Todos os recursos liberados são para fins de testes e podem sofrer alterações.
+      Sua colaboração é muito importante neste processo. Caso encontre algum erro ou tenha sugestões, sinta-se à vontade para entrar em contato.
+    </p>
+  </div>
+
+  <!-- Outros posts futuros -->
+  <div class="text-center text-gray-400 text-sm mt-10">
+    Mais atualizações serão exibidas aqui futuramente...
+  </div>
+</div>
