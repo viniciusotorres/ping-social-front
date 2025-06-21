@@ -1,87 +1,87 @@
-<div class="flex h-screen flex-col md:flex-row">
+<div class="flex h-screen flex-col md:flex-row bg-gray-900">
   <!-- Coluna da esquerda -->
   <div class="flex items-center justify-center w-full md:w-1/2 relative h-full">
     <!-- Background mobile -->
     <div class="absolute inset-0 md:hidden">
       <img src="https://w0.peakpx.com/wallpaper/518/101/HD-wallpaper-native-pattern-abstract-colors.jpg" alt="Background"
-           class="w-full h-full object-cover">
+           class="w-full h-full object-cover opacity-50">
     </div>
 
     <!-- Card de registro -->
-    <p-card class="w-full max-w-md mt-[8rem] md:mt-0 relative z-10 md:z-auto m-4" [style]="{'box-shadow': '0 4px 20px rgba(0, 0, 0, 0.1)'}">
-      <div class="text-center mb-6">
+    <div class="w-full max-w-md mt-[4rem] md:mt-0 relative z-10 md:z-auto m-4 bg-gray-800 shadow-lg rounded-lg p-4">
+      <div class="text-center mb-4">
         <img src="https://png.pngtree.com/png-vector/20220704/ourmid/pngtree-illustration-of-stylized-african-mask-png-image_5558159.png"
-             alt="Logo" class="w-[8rem] h-[8rem] mx-auto mb-4">
-        <h2 class="text-2xl font-bold text-900">Junte-se à nossa Tribo</h2>
-        <p class="text-600 mt-2">Crie sua conta e comece sua jornada conosco.</p>
+             alt="Logo" class="w-[6rem] h-[6rem] mx-auto mb-2">
+        <h2 class="text-xl font-bold text-gray-100">Junte-se à nossa Tribo</h2>
+        <p class="text-gray-400 mt-1">Crie sua conta e comece sua jornada conosco.</p>
       </div>
 
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <!-- Email -->
-        <div class="field mb-4">
-          <label for="email" class="block text-700 mb-2">Email</label>
-          <input type="text" id="email" pInputText formControlName="email"
-                 class="w-full" placeholder="Digite seu email"
-                 [ngClass]="{'p-invalid': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
-          <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="p-error block">
+        <div class="mb-3">
+          <label for="email" class="block text-gray-300 mb-1">Email</label>
+          <input type="text" id="email" formControlName="email"
+                 class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
+                 placeholder="Digite seu email"
+                 [ngClass]="{'border-red-500': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
+          <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-red-500 block">
             <span *ngIf="registerForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
             <span *ngIf="registerForm.get('email')?.errors?.['email']">Email inválido.</span>
           </small>
         </div>
 
         <!-- Senha -->
-        <div class="field mb-4">
-          <label for="password" class="block text-700 mb-2">Senha</label>
-          <p-password id="password" formControlName="password"
-                      [toggleMask]="true" [feedback]="true"
-                      placeholder="Digite sua senha" class="w-full"
-                      [ngClass]="{'p-invalid': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
-          </p-password>
-          <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="p-error block">
+        <div class="mb-3">
+          <label for="password" class="block text-gray-300 mb-1">Senha</label>
+          <input type="password" id="password" formControlName="password"
+                 class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
+                 placeholder="Digite sua senha"
+                 [ngClass]="{'border-red-500': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
+          <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-red-500 block">
             <span *ngIf="registerForm.get('password')?.errors?.['required']">Senha é obrigatória.</span>
             <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres.</span>
           </small>
         </div>
 
         <!-- Confirmar Senha -->
-        <div class="field mb-4">
-          <label for="confirmPassword" class="block text-700 mb-2">Confirmar Senha</label>
-          <p-password id="confirmPassword" formControlName="confirmPassword"
-                      [toggleMask]="true" placeholder="Confirme sua senha" class="w-full"
-                      [ngClass]="{'p-invalid': registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched}">
-          </p-password>
-          <small *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="p-error block">
+        <div class="mb-3">
+          <label for="confirmPassword" class="block text-gray-300 mb-1">Confirmar Senha</label>
+          <input type="password" id="confirmPassword" formControlName="confirmPassword"
+                 class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
+                 placeholder="Confirme sua senha"
+                 [ngClass]="{'border-red-500': registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched}">
+          <small *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="text-red-500 block">
             <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Confirmação de senha é obrigatória.</span>
             <span *ngIf="registerForm.hasError('mismatch')">As senhas não coincidem.</span>
           </small>
         </div>
 
         <!-- Termos e Condições -->
-        <div class="field-checkbox mb-5">
-          <p-checkbox id="terms" [binary]="true" formControlName="terms"></p-checkbox>
-          <label for="terms" class="ml-2 text-700">Eu concordo com os <a href="#" class="text-primary">Termos e Condições</a></label>
-          <small *ngIf="registerForm.get('terms')?.invalid && registerForm.get('terms')?.touched" class="p-error block">
+        <div class="flex items-center mb-4">
+          <input type="checkbox" id="terms" formControlName="terms"
+                 class="w-4 h-4 text-blue-500 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
+          <label for="terms" class="ml-2 text-gray-300">Eu concordo com os <a href="#" class="text-blue-400 hover:underline">Termos e Condições</a></label>
+          <small *ngIf="registerForm.get('terms')?.invalid && registerForm.get('terms')?.touched" class="text-red-500 block">
             Você deve aceitar os termos e condições.
           </small>
         </div>
 
         <!-- Botão de registro -->
-        <p-button label="Criar Conta" type="submit" styleClass="w-full"
-                  [loading]="isLoading" [disabled]="registerForm.invalid"></p-button>
+        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+                [disabled]="registerForm.invalid">Criar Conta</button>
 
         <!-- Login -->
-        <div class="text-center mt-5">
-          <p class="text-600">Já tem uma conta?</p>
-          <p-button label="Fazer Login" (onClick)="goToLogin()"
-                    styleClass="p-button-text p-0 text-primary"></p-button>
+        <div class="text-center mt-4">
+          <p class="text-gray-400">Já tem uma conta?</p>
+          <button type="button" class="text-blue-400 hover:underline" (click)="goToLogin()">Fazer Login</button>
         </div>
       </form>
-    </p-card>
+    </div>
   </div>
 
   <!-- Coluna da direita (desktop) -->
   <div class="hidden md:flex w-1/2">
     <img src="https://w0.peakpx.com/wallpaper/518/101/HD-wallpaper-native-pattern-abstract-colors.jpg" alt="Background"
-         class="w-full h-full object-cover">
+         class="w-full h-full object-cover opacity-50">
   </div>
 </div>

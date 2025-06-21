@@ -4,7 +4,6 @@ import {provideRouter, withComponentInputBinding, withHashLocation} from '@angul
 import { routes } from './app.routes';
 import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
 import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,8 +13,7 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       ripple: true,
       theme: {
-        preset: Aura
-
+        preset: 'aura'
       }
     }),
   ]
