@@ -100,30 +100,23 @@ export class ActivateComponent implements OnInit {
     const code = this.getActivationCode();
 
     this.activateService.activate(this.email, code).subscribe({
-      next: (res) => {
-        this.toastr.success('Conta ativada com sucesso!', 'Sucesso');
-        localStorage.removeItem('email');
-        this.router.navigate(['/dashboard']);
+      next: (res: string) => {
+        if (res.includes('Usuário ativado com sucesso')) {
+          this.toastr.success(res, 'Sucesso');
+          localStorage.removeItem('email');
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.toastr.error(res, 'Erro');
+          this.activateForm.reset();
+          document.getElementById('digit1')?.focus();
+        }
       },
       error: (err) => {
         this.toastr.error(err.error?.message || 'Falha ao ativar a conta. Tente novamente.', 'Erro');
-        this.activateForm.reset();
-        document.getElementById('digit1')?.focus();
       },
       complete: () => this.isLoading = false
     });
+
   }
 
-  resendCode() {
-    this.isLoading = true;
-
-    setTimeout(() => {
-      this.isLoading = false;
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Sucesso',
-        detail: 'Novo código enviado para seu e-mail!'
-      });
-    }, 1000);
-  }
 }
