@@ -1,0 +1,71 @@
+<div class="flex h-screen flex-col md:flex-row">
+  <!-- Coluna da esquerda -->
+  <div class="flex items-center justify-center w-full md:w-1/2 relative h-full">
+    <!-- Background mobile -->
+    <div class="absolute inset-0 md:hidden">
+      <img src="https://w0.peakpx.com/wallpaper/518/101/HD-wallpaper-native-pattern-abstract-colors.jpg" alt="Background"
+           class="w-full h-full object-cover">
+    </div>
+
+    <!-- Card de login -->
+    <p-card class="w-full max-w-md mt-[8rem] md:mt-0 relative z-10 md:z-auto m-4" [style]="{'box-shadow': '0 4px 20px rgba(0, 0, 0, 0.1)'}">
+      <div class="text-center mb-6">
+        <img src="https://png.pngtree.com/png-vector/20220704/ourmid/pngtree-illustration-of-stylized-african-mask-png-image_5558159.png"
+             alt="Logo" class="w-[8rem] h-[8rem] mx-auto mb-4">
+        <h2 class="text-2xl font-bold text-900">Entre na sua Tribo</h2>
+        <p class="text-600 mt-2">Estamos felizes que você voltou! Faça login e conecte-se com sua tribo.</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Email -->
+        <div class="field mb-4">
+          <label for="email" class="block text-700 mb-2">Email</label>
+          <input type="text" id="email" pInputText formControlName="email"
+                 class="w-full" placeholder="Digite seu email"
+                 [ngClass]="{'p-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}">
+          <small *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="p-error block">
+            <span *ngIf="loginForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
+            <span *ngIf="loginForm.get('email')?.errors?.['email']">Email inválido.</span>
+          </small>
+        </div>
+
+        <!-- Senha -->
+        <div class="field mb-4">
+          <label for="password" class="block text-700 mb-2">Senha</label>
+          <p-password id="password" formControlName="password"
+                      [toggleMask]="true" [feedback]="false"
+                      placeholder="Digite sua senha" class="w-full"
+                      [ngClass]="{'p-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}">
+          </p-password>
+          <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="p-error block">
+            <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória.</span>
+            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres.</span>
+          </small>
+        </div>
+
+        <!-- Esqueceu a senha -->
+        <div class="flex justify-content-between mb-5">
+          <p-button label="Esqueceu sua senha?" (onClick)="goToForgotPassword()"
+                    styleClass="p-button-text p-0 text-sm"></p-button>
+        </div>
+
+        <!-- Botão de login -->
+        <p-button label="Entrar" type="submit" styleClass="w-full"
+                  [loading]="isLoading" [disabled]="loginForm.invalid"></p-button>
+
+        <!-- Cadastro -->
+        <div class="text-center mt-5">
+          <p class="text-600">Ainda não tem conta?</p>
+          <p-button label="Cadastrar-se" (onClick)="goToRegister()"
+                    styleClass="p-button-text p-0 text-primary"></p-button>
+        </div>
+      </form>
+    </p-card>
+  </div>
+
+  <!-- Coluna da direita (desktop) -->
+  <div class="hidden md:flex w-1/2">
+    <img src="https://w0.peakpx.com/wallpaper/518/101/HD-wallpaper-native-pattern-abstract-colors.jpg" alt="Background"
+         class="w-full h-full object-cover">
+  </div>
+</div>
