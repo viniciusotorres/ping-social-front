@@ -104,7 +104,7 @@ export class ActivateComponent implements OnInit {
         if (res.includes('Usuário ativado com sucesso')) {
           this.toastr.success(res, 'Sucesso');
           localStorage.removeItem('email');
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/internal']);
         } else {
           this.toastr.error(res, 'Erro');
           this.activateForm.reset();
