@@ -1,0 +1,62 @@
+<div class="min-h-screen bg-gray-900 text-white py-10 px-4">
+  <!-- Container principal -->
+  <div class="max-w-5xl mx-auto space-y-10">
+
+    <!-- Header do perfil -->
+    <div class="bg-gray-800 rounded-2xl shadow-xl p-6 md:p-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <!-- Info do usuário -->
+        <div class="flex items-center gap-5">
+          <img
+            src="https://i.pravatar.cc/120"
+            alt="Avatar do usuário"
+            class="w-28 h-28 rounded-full border-4 border-blue-500 shadow-lg"
+          />
+          <div>
+            <h2 class="text-3xl font-bold">Admin</h2>
+            <p class="text-blue-400 text-sm">admin</p>
+          </div>
+        </div>
+
+        <!-- Ações rápidas -->
+        <div class="flex flex-col items-start gap-3 md:items-end">
+          <div class="flex gap-5 text-center">
+            <div>
+              <p class="text-xl font-semibold">128</p>
+              <p class="text-gray-400 text-sm">Seguidores</p>
+            </div>
+            <div>
+              <p class="text-xl font-semibold">89</p>
+              <p class="text-gray-400 text-sm">Seguindo</p>
+            </div>
+          </div>
+          <div class="flex gap-3 mt-3">
+            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+              Editar Perfil
+            </button>
+            <button class="bg-gray-700 hover:bg-gray-600 text-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition">
+              Configurações
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção de atividades recentes -->
+    <div>
+      <h3 class="text-xl font-semibold mb-4">Atividades recentes</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gray-800 p-5 rounded-xl shadow hover:bg-gray-700 transition">
+          <p class="text-sm text-gray-300">
+            Você comentou: <em>"Gostei bastante dessa proposta!"</em>
+          </p>
+          <span class="text-xs text-gray-500 block mt-1">2 horas atrás</span>
+        </div>
+        <div class="bg-gray-800 p-5 rounded-xl shadow hover:bg-gray-700 transition">
+          <p class="text-sm text-gray-300">Você seguiu <strong>karla.dev</strong></p>
+          <span class="text-xs text-gray-500 block mt-1">1 dia atrás</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

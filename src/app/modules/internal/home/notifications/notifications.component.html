@@ -1,0 +1,36 @@
+<div class="min-h-screen bg-gray-900 text-white py-10 px-4">
+  <div class="max-w-4xl mx-auto space-y-8">
+    <!-- Título da página -->
+    <div class="flex items-center justify-between border-b border-gray-700 pb-4">
+      <h2 class="text-2xl font-bold">Notificações</h2>
+      <button class="text-sm text-blue-400 hover:underline" (click)="markAllAsRead()">
+        Marcar todas como lidas
+      </button>
+    </div>
+
+    <!-- Lista de notificações -->
+    <div *ngFor="let notification of notifications" class="bg-gray-800 rounded-xl p-5 shadow flex items-start gap-4 hover:bg-gray-700 transition">
+      <!-- Ícone/Avatar -->
+      <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+        <i class="fas fa-bell"></i>
+      </div>
+
+      <!-- Conteúdo da notificação -->
+      <div class="flex-1">
+        <p class="text-sm leading-relaxed">
+          <span class="font-semibold text-white">{{ notification.title }}</span>
+          <span class="text-gray-300 block mt-1">{{ notification.message }}</span>
+        </p>
+        <span class="text-xs text-gray-500 block mt-2">{{ notification.time }}</span>
+      </div>
+
+      <!-- Selo de não lido -->
+      <div *ngIf="!notification.read" class="w-3 h-3 bg-red-500 rounded-full mt-2"></div>
+    </div>
+
+    <!-- Nenhuma notificação -->
+    <div *ngIf="notifications.length === 0" class="text-center text-gray-400 mt-10">
+      Você está em dia. Nenhuma notificação no momento.
+    </div>
+  </div>
+</div>

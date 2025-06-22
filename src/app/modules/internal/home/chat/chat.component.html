@@ -1,0 +1,63 @@
+<div class="flex flex-col h-screen bg-gray-900 text-white">
+  <!-- Navbar do chat -->
+  <div class="bg-gray-800 p-4 flex items-center justify-between shadow relative">
+    <h2 class="text-lg font-semibold">Chat</h2>
+
+    <!-- Dropdown de usuários online -->
+    <div class="relative">
+      <button (click)="toggleUserList()" class="text-sm text-green-400 flex items-center gap-1">
+        {{ onlineUsers.length }} online
+        <i class="fas fa-chevron-down text-xs"></i>
+      </button>
+
+      <!-- Lista de usuários online -->
+      <div *ngIf="showUserList" class="absolute right-0 mt-2 w-48 bg-gray-700 rounded-lg shadow-lg z-50">
+        <ul class="divide-y divide-gray-600">
+          <li *ngFor="let user of onlineUsers" class="px-4 py-2 text-sm text-white hover:bg-gray-600">
+            <i class="fas fa-circle text-green-400 text-xs mr-2"></i>{{ user }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Área das mensagens -->
+  <div class="flex-1 overflow-y-auto p-4 space-y-3">
+    <!-- Mensagem fixa do Admin -->
+    <div class="max-w-xl bg-gray-700 p-4 rounded-xl border-l-4 border-yellow-400">
+      <p class="text-sm">
+        🛠️ Este chat está em desenvolvimento! Envie sugestões e interaja com a comunidade.
+      </p>
+      <span class="text-xs text-gray-300 block mt-1">Admin • {{ adminPostTime }}</span>
+    </div>
+
+    <!-- Loop de mensagens -->
+    <div *ngFor="let msg of messages" [ngClass]="{
+      'bg-blue-600 self-end ml-auto text-right': msg.sender === 'Você',
+      'bg-gray-700': msg.sender !== 'Você'
+    }" class="max-w-xs p-3 rounded-xl">
+      <p class="text-sm">{{ msg.text }}</p>
+      <span class="text-xs text-gray-300 block mt-1">
+        {{ msg.sender }} • {{ msg.time }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Campo de digitação -->
+  <form (submit)="sendMessage()" class="p-4 bg-gray-800 flex items-center gap-3">
+    <input
+      [(ngModel)]="message"
+      name="message"
+      type="text"
+      placeholder="Digite sua mensagem..."
+      class="flex-1 px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+    />
+    <button
+      type="submit"
+      class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg text-white font-medium"
+    >
+      Enviar
+    </button>
+  </form>
+</div>
