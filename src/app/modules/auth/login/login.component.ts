@@ -59,9 +59,6 @@ export class LoginComponent implements OnInit{
     }, 1000);
   }
 
-
-
-
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -71,15 +68,52 @@ export class LoginComponent implements OnInit{
     this.isLoading = true;
     const { email, password } = this.loginForm.value;
 
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        localStorage.setItem('latitude', latitude.toString());
+        localStorage.setItem('longitude', longitude.toString());
+
+        this.loginService.login(email, password)
+          .pipe(finalize(() => this.isLoading = false))
+          .subscribe({
+            next: (res) => {
+              if (res.token) {
+                localStorage.setItem('authToken', res.token);
+                this.toastr.success('Login efetuado com sucesso!', 'Sucesso');
+                this.router.navigate(['/internal']);
+              } else if (res.message && res.email) {
+                this.toastr.info(res.message, 'Atenção');
+                localStorage.setItem('email', res.email);
+                this.router.navigate(['auth/activate']);
+              } else {
+                this.toastr.warning('Resposta inesperada do servidor.', 'Aviso');
+                console.warn('Resposta inesperada:', res);
+              }
+            },
+            error: (err) => this.handleLoginError(err)
+          });
+      },
+      (error) => {
+        this.isLoading = false;
+        this.toastr.warning('Permissão de localização negada. Login continuará normalmente.', 'Aviso');
+        this.proceedLoginWithoutLocation(email, password); // fallback
+      }
+    );
+  }
+
+
+  proceedLoginWithoutLocation(email: string, password: string) {
     this.loginService.login(email, password)
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (res) => {
           if (res.token) {
             localStorage.setItem('authToken', res.token);
-            this.toastr.success('Login efetuado com sucesso!', 'Success');
+            this.toastr.success('Login efetuado com sucesso!', 'Sucesso');
             this.router.navigate(['/internal']);
-          } else if (res.message) {
+          } else if (res.message && res.email) {
             this.toastr.info(res.message, 'Atenção');
             localStorage.setItem('email', res.email);
             this.router.navigate(['auth/activate']);
@@ -88,11 +122,26 @@ export class LoginComponent implements OnInit{
             console.warn('Resposta inesperada:', res);
           }
         },
-        error: (err) => {
-          this.toastr.error(err.error?.message || 'Falha no login. Tente novamente.', 'Erro');
-          console.error('Erro no login:', err);
-        }
+        error: (err) => this.handleLoginError(err)
       });
+  }
+
+  handleLoginError(err: any) {
+    const msg = err.error?.message || 'Erro ao tentar logar. Tente novamente.';
+    const title = err.status === 401 ? 'Autenticação falhou' : 'Erro';
+
+    this.toastr.error(msg, title);
+    console.error('Erro no login:', err);
+
+    if (msg.includes('Senha incorreta')) {
+      this.loginForm.get('password')?.setValue('');
+      this.loginForm.get('password')?.setErrors({ incorrect: true });
+
+      setTimeout(() => {
+        const passwordInput = document.getElementById('password');
+        if (passwordInput) passwordInput.focus();
+      }, 100);
+    }
   }
 
 
