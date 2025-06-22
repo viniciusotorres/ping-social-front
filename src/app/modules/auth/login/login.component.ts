@@ -44,12 +44,21 @@ export class LoginComponent implements OnInit{
 
   ngOnInit() {
     setTimeout(() => {
-      this.toastr.warning(
+      const firstToast = this.toastr.warning(
         'Bem-vindo! Esta é uma versão de teste, por favor envie seu feedback.',
         'Atenção'
       );
+
+
+      firstToast.onHidden.subscribe(() => {
+        this.toastr.warning(
+          'As requisições podem demorar devido ao início do desenvolvimento.',
+          'Aviso Importante'
+        );
+      });
     }, 1000);
   }
+
 
 
 

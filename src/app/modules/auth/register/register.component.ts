@@ -16,6 +16,7 @@ import {CheckboxModule} from 'primeng/checkbox';
 import {CommonModule} from '@angular/common';
 import {RegisterService} from '../services/register-service/register.service';
 import {ToastrService} from 'ngx-toastr';
+import {finalize} from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -69,19 +70,20 @@ export class RegisterComponent {
       return;
     }
 
-    const {email, password, role} = this.registerForm.value;
+    const { email, password, role } = this.registerForm.value;
 
     this.isLoading = true;
-    this.registerService.register({email, password, role}).subscribe({
-      next: (res) => {
-        this.toastr.success(res.message, 'Sucesso!');
-        this.goToLogin();
-      },
-      error: (err) => {
-        this.toastr.error(err.error.message || 'Erro ao registrar usuário', 'Erro!');
-        this.isLoading = false;
-      }
-    });
+    this.registerService.register({ email, password, role })
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (res) => {
+          this.toastr.success(res.message, 'Sucesso!');
+          this.goToLogin();
+        },
+        error: (err) => {
+          this.toastr.error(err.error?.message || 'Erro ao registrar usuário', 'Erro!');
+        }
+      });
   }
 
 
