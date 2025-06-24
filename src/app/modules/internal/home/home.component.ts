@@ -3,11 +3,12 @@ import {Router} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {HomeService} from './services/home-service/home.service';
 import {NavBarCommonComponent} from '../../../shared/components/nav-bar-common/nav-bar-common.component';
+import {FeedComponent} from './feed/feed.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NavBarCommonComponent],
+  imports: [CommonModule, NavBarCommonComponent, FeedComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -57,7 +58,6 @@ export class HomeComponent implements OnInit {
         if (data.data) {
           this.showSelectTribe = false;
         } else {
-
           this.openTribeModal();
         }
       },

@@ -10,17 +10,28 @@
         <i class="fas fa-home"></i>
       </button>
 
-      <button (click)="goToChat()" aria-label="Chat" class="hover:text-blue-500 transition cursor-pointer">
+      <button
+        disabled
+        aria-label="Chat"
+        class="text-gray-400 opacity-50 cursor-not-allowed transition"
+      >
         <i class="fas fa-comments"></i>
       </button>
+
 
       <button (click)="goToProfile()" aria-label="Perfil" class="hover:text-blue-500 transition cursor-pointer">
         <i class="fas fa-user"></i>
       </button>
 
-      <button (click)="goToNotifications()" aria-label="Notificações" class="hover:text-blue-500 transition cursor-pointer">
+      <button
+        disabled
+        aria-label="Notificações"
+        class="text-gray-400 opacity-50 cursor-not-allowed transition"
+      >
         <i class="fas fa-bell"></i>
       </button>
+
+
 
       @if (showSelectTribe) {
         <button (click)="openTribeModal()" aria-label="Tribo" class="hover:text-yellow-500 transition cursor-pointer">

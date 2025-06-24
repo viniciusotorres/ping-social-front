@@ -24,5 +24,9 @@ export const internalRoutes: Routes = [
   {
     path: 'following',
     loadComponent: () => import('./home/following/following.component').then(m => m.FollowingComponent)
+  },
+  {
+    path: 'feed',
+    loadComponent: () => import('./home/feed/feed.component').then(m => m.FeedComponent)
   }
 ];

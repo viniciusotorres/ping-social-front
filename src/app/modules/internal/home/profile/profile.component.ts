@@ -22,6 +22,11 @@ export class ProfileComponent {
   countFollowingUsers: number = 0;
   countFollowedUsers: number = 0;
   tribes: any[] = [];
+  followersMapping: { [k: string]: string } = {
+    '=0': 'Nenhum seguidor',
+    '=1': '1 seguidor',
+    other: '# seguidores'
+  };
 
   constructor(
     private profileService: ProfileService,
@@ -130,6 +135,7 @@ export class ProfileComponent {
         this.suggestedUsers = res.items;
         this.suggestedUsers.forEach(user => this.setUserFollowingStatus(user));
         this.loadTribesForSuggestedUsers();
+        this.loadFollowersCountForSuggestedUsers();
       },
       error: (err) => {
         console.error('Erro ao carregar sugestões:', err);
@@ -199,6 +205,20 @@ export class ProfileComponent {
 
   goToFollowingUsers() {
     this.router.navigate(['/internal/following']);
+  }
+
+  loadFollowersCountForSuggestedUsers(): void {
+    this.suggestedUsers.forEach((user) => {
+      this.profileService.getFollowedUsersByUserId(user.id).subscribe({
+        next: (res) => {
+          user.followersCount = res.count || 0;
+        },
+        error: (err) => {
+          console.error(`Erro ao carregar seguidores de ${user.nickname}:`, err);
+          user.followersCount = 0;
+        }
+      });
+    });
   }
 
   logout() {
