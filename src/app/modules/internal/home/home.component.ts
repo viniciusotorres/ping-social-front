@@ -12,6 +12,7 @@ import {NavBarCommonComponent} from '../../../shared/components/nav-bar-common/n
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
+  loadingTribe: { [tribeId: number]: boolean } = {};
   showDropdown = false;
   showTribeModal = false;
   showSelectTribe = true;
@@ -26,8 +27,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadTribes();
     this.verifyHasTribe();
+    this.loadTribes();
   }
 
   @HostListener('document:click', ['$event'])
@@ -56,6 +57,7 @@ export class HomeComponent implements OnInit {
         if (data.data) {
           this.showSelectTribe = false;
         } else {
+
           this.openTribeModal();
         }
       },
@@ -67,20 +69,24 @@ export class HomeComponent implements OnInit {
 
   choiceTribe(tribeId: number) {
     if (this.showSelectTribe) {
-      this.homeService.joinTribe(tribeId).subscribe(
-        {
-          next: (data) => {
-            console.log('Tribe joined successfully:', data);
-            this.showSelectTribe = false;
-            this.showTribeModal = false;
-          },
-          error: (error) => {
-            console.error('Error joining tribe:', error);
-          }
+      this.loadingTribe[tribeId] = true;
+
+      this.homeService.joinTribe(tribeId).subscribe({
+        next: (data) => {
+          console.log('Tribe joined successfully:', data);
+          this.showSelectTribe = false;
+          this.showTribeModal = false;
+        },
+        error: (error) => {
+          console.error('Error joining tribe:', error);
+        },
+        complete: () => {
+          this.loadingTribe[tribeId] = false;
         }
-      )
+      });
     }
   }
+
 
   openTribeModal() {
     this.showTribeModal = true;

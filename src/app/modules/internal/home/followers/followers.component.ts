@@ -3,6 +3,8 @@ import {ProfileService} from '../services/profile-service/profile.service';
 import {CommonModule} from '@angular/common';
 import {NavBarCommonComponent} from '../../../../shared/components/nav-bar-common/nav-bar-common.component';
 import {Router} from '@angular/router';
+import {Observable} from 'rxjs';
+import {HomeService} from '../services/home-service/home.service';
 
 @Component({
   selector: 'app-followers',
@@ -12,9 +14,11 @@ import {Router} from '@angular/router';
   styleUrl: './followers.component.scss'
 })
 export class FollowersComponent {
+  loadingFollow: { [userId: number]: boolean } = {};
   followers: any[] = [];
 
-  constructor(private profileService: ProfileService, private router: Router) {
+  constructor(private profileService: ProfileService, private router: Router, private homeService: HomeService) {
+    // Inicialização do componente
   }
 
   ngOnInit(): void {
@@ -26,6 +30,11 @@ export class FollowersComponent {
     this.profileService.getFollowedUsersByUserId(userId).subscribe({
       next: (res) => {
         this.followers = res.items || [];
+        this.followers.forEach(follower => {
+          this.loadTribesForUser(follower);
+        });
+
+        this.checkFollowingStatus();
       },
       error: (err) => {
         console.error('Erro ao carregar seguidores', err);
@@ -33,8 +42,38 @@ export class FollowersComponent {
     });
   }
 
+  checkFollowingStatus(): void {
+    this.followers.forEach(user => {
+      this.profileService.verifyFollowedUser(user.followedUserId).subscribe({
+        next: (isFollowing) => {
+          user.following = isFollowing;
+        },
+        error: () => {
+          user.following = false; // fallback
+        }
+      });
+    });
+  }
+
+
   toggleFollow(user: any): void {
-    // Lógica para seguir/deixar de seguir
+    this.loadingFollow[user.followedUserId] = true;
+
+    const followAction = user.following
+      ? this.profileService.unfollowUser(user.followedUserId)
+      : this.profileService.followUser(user.followedUserId);
+
+    followAction.subscribe({
+      next: () => {
+        user.following = !user.following;
+      },
+      error: (err) => {
+        console.error('Erro ao seguir/deixar de seguir:', err);
+      },
+      complete: () => {
+        this.loadingFollow[user.followedUserId] = false;
+      }
+    });
   }
 
   goToChat() {
@@ -51,6 +90,22 @@ export class FollowersComponent {
 
   goToHome() {
     this.router.navigate(['/internal/']);
+  }
+
+  loadTribesForUser(user: any): void {
+    this.homeService.loadTribeByUserId(user.followedUserId).subscribe({
+      next: (res) => {
+        if (res?.items?.length > 0) {
+          user.tribeName = res.items[0].name;
+        } else {
+          user.tribeName = null;
+        }
+      },
+      error: (err) => {
+        console.error(`Erro ao carregar tribos do usuário ${user.followedUserId}`, err);
+        user.tribeName = null;
+      }
+    });
   }
 
   logout() {

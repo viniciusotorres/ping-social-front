@@ -13,7 +13,7 @@ import {HomeService} from '../services/home-service/home.service';
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
-
+  loadingFollow: { [userId: number]: boolean } = {};
   suggestedUsers: any[] = [];
   followingUsers: any[] = [];
   followedUsers: any[] = [];
@@ -102,11 +102,26 @@ export class ProfileComponent {
   }
 
   toggleFollow(user: any): void {
-    if (user.following) {
-      this.unfollowUser(user);
-    } else {
-      this.followUser(user);
-    }
+    const userId = user.id;
+    this.loadingFollow[userId] = true;
+
+    const action$ = user.following
+      ? this.profileService.unfollowUser(userId)
+      : this.profileService.followUser(userId);
+
+    action$.subscribe({
+      next: () => {
+        user.following = !user.following;
+        this.loadFollowingUsers()
+        this.loadFollowedUser();
+      },
+      error: (err) => {
+        console.error('Erro ao alternar follow:', err);
+      },
+      complete: () => {
+        this.loadingFollow[userId] = false;
+      }
+    });
   }
 
   private loadSuggestedUsers(): void {
@@ -114,10 +129,25 @@ export class ProfileComponent {
       next: (res) => {
         this.suggestedUsers = res.items;
         this.suggestedUsers.forEach(user => this.setUserFollowingStatus(user));
+        this.loadTribesForSuggestedUsers();
       },
       error: (err) => {
         console.error('Erro ao carregar sugestões:', err);
       }
+    });
+  }
+
+  loadTribesForSuggestedUsers() {
+    this.suggestedUsers.forEach((user) => {
+      this.homeService.loadTribeByUserId(user.id).subscribe({
+        next: (res) => {
+          user.tribes = res?.items || [];
+        },
+        error: (err) => {
+          console.error(`Erro ao carregar tribos do usuário ${user.id}:`, err);
+          user.tribes = [];
+        }
+      });
     });
   }
 

@@ -23,14 +23,22 @@
               <i class="fas fa-user"></i>
             </div>
             <div>
-              <p class="font-semibold text-white">{{ follower.nickname }}</p>
+              <p class="font-semibold text-white">{{ follower.followedUserName }}</p>
 
               <!-- Tribo -->
               <span
                 *ngIf="follower.tribeName; else noTribe"
                 class="inline-block bg-blue-600 bg-opacity-30 text-blue-300 text-xs font-semibold px-3 py-0.5 rounded-full mt-1">
-                <i class="fas fa-shield-alt mr-1"></i> {{ follower.tribeName }}
-              </span>
+  <i class="fas fa-shield-alt mr-1"></i> {{ follower.tribeName }}
+</span>
+
+              <ng-template #noTribe>
+  <span
+    class="inline-block bg-gray-600 bg-opacity-30 text-gray-400 text-xs font-semibold px-3 py-0.5 rounded-full mt-1">
+    Sem tribo
+  </span>
+              </ng-template>
+
 
               <ng-template #noTribe>
                 <span
@@ -41,17 +49,29 @@
             </div>
           </div>
 
-          <!-- Botão de seguir -->
+          <!-- Botão de seguir/seguindo com loading -->
           <button
-            class="px-4 py-1 text-sm rounded-full font-semibold transition duration-200"
+            class="px-4 py-1 text-sm rounded-full font-semibold transition duration-200 flex items-center justify-center gap-2"
+            [disabled]="loadingFollow[follower.id]"
             [ngClass]="{
-              'bg-blue-500 hover:bg-blue-600 text-white': !follower.following,
-              'bg-gray-600 hover:bg-gray-500 text-white': follower.following
-            }"
+    'bg-blue-500 hover:bg-blue-600 text-white': !follower.following,
+    'bg-gray-600 hover:bg-gray-500 text-white': follower.following
+  }"
             (click)="toggleFollow(follower)"
           >
-            {{ follower.following ? 'Seguindo' : 'Seguir de volta' }}
+            <ng-container *ngIf="!loadingFollow[follower.id]; else loading">
+              {{ follower.following ? 'Seguindo' : 'Seguir de volta' }}
+            </ng-container>
+            <ng-template #loading>
+              <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                   viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            </ng-template>
           </button>
+
         </div>
       </div>
 
