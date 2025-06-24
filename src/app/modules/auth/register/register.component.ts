@@ -64,28 +64,38 @@ export class RegisterComponent {
     return null;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       this.toastr.error('Por favor, preencha todos os campos corretamente.', 'Erro!');
       return;
     }
 
-    const { email, password, role } = this.registerForm.value;
+    const { nickname, email, password, role } = this.registerForm.value;
+
+    const payload = {
+      nickname: nickname?.trim(),
+      email: email?.trim(),
+      password,
+      role
+    };
 
     this.isLoading = true;
-    this.registerService.register({ email, password, role })
+
+    this.registerService.register(payload)
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (res) => {
-          this.toastr.success(res.message, 'Sucesso!');
+          this.toastr.success(res?.message || 'Usuário registrado com sucesso.', 'Sucesso!');
           this.goToLogin();
         },
         error: (err) => {
-          this.toastr.error(err.error?.message || 'Erro ao registrar usuário', 'Erro!');
+          const errorMessage = err?.error?.message || 'Erro ao registrar usuário. Tente novamente.';
+          this.toastr.error(errorMessage, 'Erro!');
         }
       });
   }
+
 
 
   goToLogin() {
