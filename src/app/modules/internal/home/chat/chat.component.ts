@@ -1,11 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {CommonModule, NgClass} from '@angular/common';
+import {NavBarCommonComponent} from '../../../../shared/components/nav-bar-common/nav-bar-common.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [FormsModule, NgClass, CommonModule],
+  imports: [FormsModule, NgClass, CommonModule, NavBarCommonComponent],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
@@ -16,9 +18,11 @@ export class ChatComponent implements OnInit {
   onlineUsers = ['Ana', 'Carlos', 'Bia', 'Lucas', 'Marina'];
   showUserList = false;
 
-  ngOnInit() {
-    this.adminPostTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  constructor(private router: Router) {
+  }
 
+  ngOnInit() {
+    this.adminPostTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
   }
 
   sendMessage() {
@@ -28,7 +32,7 @@ export class ChatComponent implements OnInit {
     this.messages.push({
       text: this.message,
       sender: 'Você',
-      time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      time: now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
     });
 
     this.message = '';
@@ -36,5 +40,22 @@ export class ChatComponent implements OnInit {
 
   toggleUserList() {
     this.showUserList = !this.showUserList;
+  }
+
+  goToChat() {
+    this.router.navigate(['/internal/chat']);
+  }
+
+  goToProfile() {
+    this.router.navigate(['/internal/profile']);
+  }
+
+  goToNotifications() {
+    this.router.navigate(['/internal/notifications']);
+  }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/auth/login']);
   }
 }

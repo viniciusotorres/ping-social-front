@@ -2,11 +2,12 @@ import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/c
 import {Router} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {HomeService} from './services/home-service/home.service';
+import {NavBarCommonComponent} from '../../../shared/components/nav-bar-common/nav-bar-common.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NavBarCommonComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -14,7 +15,7 @@ export class HomeComponent implements OnInit {
   showDropdown = false;
   showTribeModal = false;
   showSelectTribe = true;
-
+  step: number = 1;
   tribes: any;
 
   @ViewChild('dropdownRef') dropdownRef!: ElementRef;
@@ -26,7 +27,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.loadTribes();
-     this.verifyHasTribe();
+    this.verifyHasTribe();
   }
 
   @HostListener('document:click', ['$event'])
@@ -85,8 +86,9 @@ export class HomeComponent implements OnInit {
     this.showTribeModal = true;
   }
 
-  closeTribeModal() {
-    this.showTribeModal = false;
+  closeTribeModal(): void {
+    this.step = 1;
+    this.showSelectTribe = false;
   }
 
   goToChat() {
@@ -100,8 +102,6 @@ export class HomeComponent implements OnInit {
   goToNotifications() {
     this.router.navigate(['/internal/notifications']);
   }
-
-
 
   logout() {
     localStorage.clear();

@@ -1,39 +1,11 @@
-<!-- Navbar fixa -->
-<nav class="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 shadow z-50">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-    <!-- Nome do sistema -->
-    <h1 class="text-xl font-bold text-gray-800 dark:text-white">the tribe</h1>
-
-    <!-- Ícones alinhados à direita -->
-    <div class="flex items-center gap-6 text-gray-700 dark:text-white text-xl">
-      <button aria-label="Feed" class="hover:text-blue-500 transition cursor-pointer">
-        <i class="fas fa-home"></i>
-      </button>
-
-      <button (click)="goToChat()" aria-label="Chat" class="hover:text-blue-500 transition cursor-pointer">
-        <i class="fas fa-comments"></i>
-      </button>
-
-      <button (click)="goToProfile()" aria-label="Perfil" class="hover:text-blue-500 transition cursor-pointer">
-        <i class="fas fa-user"></i>
-      </button>
-
-      <button (click)="goToNotifications()" aria-label="Notificações" class="hover:text-blue-500 transition cursor-pointer">
-        <i class="fas fa-bell"></i>
-      </button>
-
-      @if (showSelectTribe) {
-      <button (click)="openTribeModal()" aria-label="Tribo" class="hover:text-yellow-500 transition cursor-pointer">
-        <i class="fas fa-campground"></i>
-      </button>
-      }
-
-      <button (click)="logout()" aria-label="Sair" class="hover:text-red-600 transition cursor-pointer">
-        <i class="fas fa-sign-out-alt"></i>
-      </button>
-    </div>
-  </div>
-</nav>
+<app-nav-bar-common
+  [showSelectTribe]="showSelectTribe"
+  (chat)="goToChat()"
+  (profile)="goToProfile()"
+  (notifications)="goToNotifications()"
+  (tribeModal)="openTribeModal()"
+  (logoutEvent)="logout()"
+></app-nav-bar-common>
 
 <!-- Conteúdo principal -->
 <div class="max-w-2xl mx-auto pt-24 px-4">
@@ -77,6 +49,45 @@
       Sua colaboração é muito importante neste processo. Caso encontre algum erro ou tenha sugestões, sinta-se à vontade para entrar em contato.
     </p>
   </div>
+
+  <!-- Post fixado: Recursos disponíveis -->
+  <div class="bg-white dark:bg-gray-800 border-l-4 border-green-500 shadow p-5 rounded-xl mb-6">
+    <div class="flex items-center mb-2">
+      <!-- Avatar -->
+      <img
+        src="https://i.pravatar.cc/32?img=12"
+        alt="Admin Avatar"
+        class="w-8 h-8 rounded-full mr-2 border border-green-500"
+      />
+      <!-- Nome + data -->
+      <div class="flex flex-col">
+        <div class="bg-green-500 text-white font-bold px-3 py-1 text-sm rounded-full w-fit">Admin</div>
+        <span class="text-gray-600 dark:text-gray-300 text-xs mt-1">Post fixado • 24 de Junho de 2025</span>
+      </div>
+    </div>
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Plataforma em evolução — confira o que já está disponível!
+    </h2>
+    <p class="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
+      A plataforma já conta com diversos recursos ativos e prontos para uso:
+    </p>
+    <ul class="list-disc list-inside text-gray-700 dark:text-gray-200 text-sm mt-3 space-y-1">
+      <li><strong>Login e Registro</strong> com autenticação segura.</li>
+      <li><strong>Perfil de usuário</strong> com informações, seguidores, seguindo e tribos.</li>
+      <li><strong>Funcionalidade de seguir e deixar de seguir</strong> outros usuários.</li>
+      <li><strong>Listagem de seguidores e seguindo</strong> com visual moderno.</li>
+      <li><strong>Tribos</strong>: visualização e associação a múltiplas tribos.</li>
+      <li><strong>Escolha de tribos</strong> com modal interativo e etapas explicativas.</li>
+      <li><strong>Interface responsiva</strong>, com modo escuro ativado por padrão.</li>
+    </ul>
+    <p class="text-gray-700 dark:text-gray-200 text-sm mt-3">
+      Continuamos trabalhando para adicionar novas funcionalidades, melhorar a experiência do usuário e garantir uma navegação mais fluida.
+    </p>
+    <p class="text-gray-700 dark:text-gray-200 text-sm mt-2">
+      Caso tenha sugestões ou encontre algum erro, entre em contato conosco. Sua opinião é essencial para o crescimento da plataforma!
+    </p>
+  </div>
+
 
   <!-- Post fixado 2: Reset de senha em andamento -->
   <div class="bg-white dark:bg-gray-800 border-l-4 border-yellow-500 shadow p-5 rounded-xl mb-6">
@@ -129,29 +140,66 @@
   </footer>
 </div>
 
-<!-- Modal de Seleção de Tribo -->
+<!-- Modal de Seleção de Tribo com Steps -->
 @if (showSelectTribe) {
   <div class="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center">
-    <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl p-6 shadow-2xl border dark:border-gray-700">
+    <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl p-6 shadow-2xl border dark:border-gray-700 relative">
+
+      <!-- Título dinâmico -->
       <h2 class="text-2xl font-extrabold text-gray-800 dark:text-white mb-6 text-center">
-        Escolha sua Tribo
+        {{ step === 1 ? 'O que são Tribos?' : step === 2 ? 'Por que escolher uma Tribo?' : 'Escolha sua Tribo' }}
       </h2>
 
-      <div class="grid gap-4">
+      <!-- Step 1 - O que são tribos -->
+      <div *ngIf="step === 1" class="text-gray-700 dark:text-gray-300 text-center space-y-4">
+        <p>As <strong>tribos</strong> são grupos temáticos onde pessoas com interesses semelhantes se conectam.</p>
+        <p>Elas ajudam você a encontrar conteúdos relevantes e se envolver com quem compartilha suas ideias.</p>
+      </div>
+
+      <!-- Step 2 - Por que escolher uma tribo -->
+      <div *ngIf="step === 2" class="text-gray-700 dark:text-gray-300 text-center space-y-4">
+        <p>Escolher uma tribo ajuda a <strong>personalizar sua experiência</strong> na plataforma.</p>
+        <p>Você receberá sugestões de postagens, eventos e pessoas com base nessa escolha.</p>
+      </div>
+
+      <!-- Step 3 - Escolha da tribo -->
+      <div *ngIf="step === 3">
+        <div class="grid gap-4">
+          <button
+            *ngFor="let tribe of tribes"
+            (click)="choiceTribe(tribe.id)"
+            class="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-700
+                 bg-gray-50 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-pink-500 hover:to-yellow-500
+                 hover:text-white transition-all duration-300 text-left font-medium"
+          >
+            <i class="fas fa-campground text-lg" *ngIf="tribe.icon"></i>
+            {{ tribe.name }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Navegação entre steps -->
+      <div class="mt-6 flex justify-between items-center" *ngIf="step < 3">
         <button
-          *ngFor="let tribe of tribes"
-          (click)="choiceTribe(tribe.id)"
-          class="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-700
-               bg-gray-50 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-pink-500 hover:to-yellow-500
-               hover:text-white transition-all duration-300 text-left font-medium"
+          *ngIf="step > 1"
+          (click)="step = step - 1"
+          class="text-sm text-gray-500 hover:text-blue-500 transition"
         >
-          <!-- Ícone opcional -->
-          <i class="fas fa-campground text-lg" *ngIf="tribe.icon"></i>
-          {{ tribe.name }}
+          ← Voltar
+        </button>
+
+        <div class="flex-1"></div>
+
+        <button
+          (click)="step = step + 1"
+          class="text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition"
+        >
+          Próximo →
         </button>
       </div>
 
-      <div class="text-center mt-6">
+      <!-- Botão de cancelar (em qualquer etapa) -->
+      <div class="text-center mt-4">
         <button
           (click)="closeTribeModal()"
           class="text-sm text-gray-500 hover:text-red-500 transition"

@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {NavBarCommonComponent} from '../../../../shared/components/nav-bar-common/nav-bar-common.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NavBarCommonComponent],
   templateUrl: './notifications.component.html',
   styleUrl: './notifications.component.scss'
 })
@@ -43,8 +45,27 @@ export class NotificationsComponent {
   ];
 
 
+  constructor(private router: Router) { }
+
   markAllAsRead() {
     this.notifications.forEach(n => n.read = true);
   }
-}
 
+  goToChat() {
+    this.router.navigate(['/internal/chat']);
+  }
+
+  goToProfile() {
+    this.router.navigate(['/internal/profile']);
+  }
+
+  goToNotifications() {
+    this.router.navigate(['/internal/notifications']);
+  }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/auth/login']);
+  }
+
+}

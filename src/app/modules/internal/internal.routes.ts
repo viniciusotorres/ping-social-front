@@ -16,5 +16,13 @@ export const internalRoutes: Routes = [
   {
     path: 'notifications',
     loadComponent: () => import('./home/notifications/notifications.component').then(m => m.NotificationsComponent)
+  },
+  {
+    path: 'followers',
+    loadComponent: () => import('./home/followers/followers.component').then(m => m.FollowersComponent)
+  },
+  {
+    path: 'following',
+    loadComponent: () => import('./home/following/following.component').then(m => m.FollowingComponent)
   }
 ];

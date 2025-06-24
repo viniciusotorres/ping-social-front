@@ -1,82 +1,178 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {ProfileService} from '../services/profile-service/profile.service';
+import {NavBarCommonComponent} from '../../../../shared/components/nav-bar-common/nav-bar-common.component';
+import {Router} from '@angular/router';
+import {HomeService} from '../services/home-service/home.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NavBarCommonComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
-  user = {
-    name: 'Vinícius Tôrres',
-    username: 'viniciustorres',
-    avatarUrl: 'https://i.pravatar.cc/100',
-    bio: 'Desenvolvedor full stack apaixonado por tecnologia, inovação e soluções que transformam. Explorando novas ideias e evoluindo com a tribo.',
-    followers: 128,
-    following: 89
-  };
 
-  suggestedUsers = [
-    {
-      name: 'Karla Silva',
-      username: 'karla.dev',
-      avatar: 'https://i.pravatar.cc/150?img=12',
-      following: false
-    },
-    {
-      name: 'João Pereira',
-      username: 'joaop',
-      avatar: 'https://i.pravatar.cc/150?img=5',
-      following: false
-    },
-    {
-      name: 'Mariana Code',
-      username: 'maricode',
-      avatar: 'https://i.pravatar.cc/150?img=7',
-      following: true
-    }
-  ];
+  suggestedUsers: any[] = [];
+  followingUsers: any[] = [];
+  followedUsers: any[] = [];
+  userEmail: string = '';
+  nickname: string = '';
+  countFollowingUsers: number = 0;
+  countFollowedUsers: number = 0;
+  tribes: any[] = [];
 
-
-  activities = [
-    {
-      type: 'comment',
-      content: 'Você comentou em um post: "Gostei bastante dessa proposta!"',
-      timestamp: '2 horas atrás'
-    },
-    {
-      type: 'follow',
-      content: 'Você seguiu @karla.dev',
-      timestamp: '1 dia atrás'
-    }
-  ];
-
-  constructor() {}
+  constructor(
+    private profileService: ProfileService,
+    private homeService: HomeService,
+    private router: Router) {
+  }
 
   ngOnInit(): void {
-    // Aqui no futuro: buscar dados da API autenticada, exemplo:
-    // this.profileService.getUserProfile().subscribe(data => this.user = data);
+    this.loadSuggestedUsers();
+    this.loadFollowedUser();
+    this.loadUserInfo();
+    this.loadFollowingUsers();
+    this.loadTribeByUserId();
   }
 
-  editProfile(): void {
-    // Navegar ou abrir modal de edição de perfil
-    console.log('Editar perfil clicado');
-  }
-
-  toggleFollow(user: any) {
-    user.following = !user.following;
-
-    if (user.following) {
-
-    } else {
+  loadUserInfo(): void {
+    const user = localStorage.getItem('email');
+    if (user) {
+      this.userEmail = user || 'Usuário';
+      this.nickname = localStorage.getItem('nickname') || 'Usuário';
     }
   }
 
+  loadTribeByUserId(): void {
+    const userId = Number(localStorage.getItem('userId'));
+    this.homeService.loadTribeByUserId(userId).subscribe({
+      next: (res) => {
+        console.log('Tribos do usuário carregadas:', res);
+        if (res?.items?.length > 0) {
+          this.tribes = res.items.map((tribe: any) => tribe.name);
+        } else {
+          this.tribes = [];
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar tribos do usuário:', err);
+        this.tribes = [];
+      }
+    });
+  }
 
-  openSettings(): void {
-    // Navegar ou abrir modal de configurações
-    console.log('Configurações clicado');
+  private setUserFollowingStatus(user: any): void {
+    this.profileService.verifyFollowedUser(user.id).subscribe({
+      next: (res) => {
+        user.following = res.message === 'Usuário está seguindo';
+      },
+      error: (err) => {
+        console.error(`Erro ao verificar se segue ${user.email}:`, err);
+        user.following = false;
+      }
+    });
+  }
+
+  private followUser(user: any): void {
+    this.profileService.followUser(user.id).subscribe({
+      next: () => {
+        user.following = true;
+        this.loadFollowingUsers();
+        console.log(`Seguindo ${user.email}`);
+      },
+      error: (err) => {
+        console.error('Erro ao seguir usuário:', err);
+      }
+    });
+  }
+
+  private unfollowUser(user: any): void {
+    this.profileService.unfollowUser(user.id).subscribe({
+      next: () => {
+        user.following = false;
+        this.loadFollowingUsers();
+        console.log(`Deixou de seguir ${user.email}`);
+      },
+      error: (err) => {
+        console.error('Erro ao deixar de seguir usuário:', err);
+      }
+    });
+  }
+
+  toggleFollow(user: any): void {
+    if (user.following) {
+      this.unfollowUser(user);
+    } else {
+      this.followUser(user);
+    }
+  }
+
+  private loadSuggestedUsers(): void {
+    this.profileService.getSuggestedUsers().subscribe({
+      next: (res) => {
+        this.suggestedUsers = res.items;
+        this.suggestedUsers.forEach(user => this.setUserFollowingStatus(user));
+      },
+      error: (err) => {
+        console.error('Erro ao carregar sugestões:', err);
+      }
+    });
+  }
+
+  private loadFollowedUser(): void {
+    const userId = Number(localStorage.getItem('userId'));
+    this.profileService.getFollowedUsersByUserId(userId).subscribe({
+      next: (res) => {
+        this.followedUsers = res.items;
+        this.countFollowedUsers = res.count;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar usuários seguidos:', err);
+      }
+    });
+  }
+
+  private loadFollowingUsers(): void {
+    const userId = Number(localStorage.getItem('userId'));
+    this.profileService.getFollowingUsersByUserId(userId).subscribe({
+      next: (res) => {
+        this.followingUsers = res.items;
+        this.countFollowingUsers = res.count;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar usuários seguidos:', err);
+      }
+    });
+  }
+
+  goToChat() {
+    this.router.navigate(['/internal/chat']);
+  }
+
+  goToProfile() {
+    this.router.navigate(['/internal/profile']);
+  }
+
+  goToNotifications() {
+    this.router.navigate(['/internal/notifications']);
+  }
+
+  goToHome() {
+    this.router.navigate(['/internal/']);
+  }
+
+  goToFollowedUsers() {
+    this.router.navigate(['/internal/followers']);
+  }
+
+  goToFollowingUsers() {
+    this.router.navigate(['/internal/following']);
+  }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/auth/login']);
   }
 }

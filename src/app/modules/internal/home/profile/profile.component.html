@@ -1,49 +1,80 @@
-<div class="min-h-screen bg-gray-900 text-white py-10 px-4">
-  <div class="max-w-5xl mx-auto space-y-10">
+<app-nav-bar-common
+  (home)="goToHome()"
+  (chat)="goToChat()"
+  (profile)="goToProfile()"
+  (notifications)="goToNotifications()"
+  (logoutEvent)="logout()"
+></app-nav-bar-common>
 
-    <!-- Header do perfil -->
-    <div class="bg-gray-800 rounded-2xl shadow-xl p-6 md:p-10">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        <!-- Info do usuário -->
-        <div class="flex items-center gap-5">
-          <div class="w-12 h-12 flex items-center justify-center bg-gray-700 rounded-full border border-blue-400 text-white text-xl">
-            <i class="fas fa-user"></i>
+<div class="pt-20 min-h-screen bg-gray-900 text-white px-4 pb-4">
+  <div class="max-w-6xl mx-auto space-y-12">
+    <!-- Info do usuário + Estatísticas -->
+    <div class="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between gap-6 md:gap-10 items-start md:items-center">
+
+      <!-- Avatar + Info -->
+      <div class="flex items-start gap-5 w-full md:w-auto">
+        <!-- Avatar -->
+        <div class="w-16 h-16 flex items-center justify-center bg-gray-700 rounded-full border border-blue-400 text-white text-2xl">
+          <i class="fas fa-user"></i>
+        </div>
+
+        <!-- Dados -->
+        <div class="flex flex-col justify-center">
+          <h2 class="text-2xl font-bold">{{ nickname }}</h2>
+          <p class="text-blue-400 text-sm mb-1">Perfil</p>
+
+          <!-- Badges de tribos -->
+          <div *ngIf="tribes.length > 0; else noTribe" class="flex flex-wrap gap-2 mt-1">
+        <span
+          *ngFor="let tribe of tribes"
+          class="inline-flex items-center gap-2 bg-blue-500 bg-opacity-20 text-blue-300 px-3 py-1 rounded-full text-xs font-medium select-none"
+        >
+          <i class="fas fa-shield-alt text-sm"></i> {{ tribe }}
+        </span>
           </div>
 
-          <div>
-            <h2 class="text-3xl font-bold">Admin</h2>
-            <p class="text-blue-400 text-sm">admin</p>
+          <ng-template #noTribe>
+            <div class="inline-flex items-center gap-2 bg-gray-500 bg-opacity-20 text-gray-300 px-3 py-1 rounded-full text-xs font-medium select-none mt-1">
+              <i class="fas fa-shield-alt text-sm"></i>
+              <span>Sem tribo</span>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Estatísticas + Ações -->
+      <div class="flex flex-col gap-3 w-full md:w-auto items-start md:items-end">
+        <!-- Estatísticas -->
+        <div class="flex gap-6">
+          <div class="text-center" (click)="goToFollowedUsers()">
+            <p class="text-lg font-semibold">{{ countFollowedUsers }}</p>
+            <p class="text-gray-400 text-sm">Seguidores</p>
+          </div>
+          <div class="text-center" (click)="goToFollowingUsers()">
+            <p class="text-lg font-semibold">{{ countFollowingUsers }}</p>
+            <p class="text-gray-400 text-sm">Seguindo</p>
           </div>
         </div>
 
-        <!-- Ações rápidas -->
-        <div class="flex flex-col items-start gap-3 md:items-end">
-          <div class="flex gap-5 text-center">
-            <div>
-              <p class="text-xl font-semibold">128</p>
-              <p class="text-gray-400 text-sm">Seguidores</p>
-            </div>
-            <div>
-              <p class="text-xl font-semibold">89</p>
-              <p class="text-gray-400 text-sm">Seguindo</p>
-            </div>
-          </div>
-          <div class="flex gap-3 mt-3">
-            <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium">
-              Editar Perfil
-            </button>
-            <button class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-medium">
-              Configurações
-            </button>
-          </div>
+        <!-- Botões -->
+        <div class="flex gap-3 flex-wrap mt-2">
+          <button
+            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap">
+            Editar Perfil
+          </button>
+          <button
+            class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap">
+            Configurações
+          </button>
         </div>
       </div>
     </div>
 
+
     <!-- Atividades recentes -->
     <div>
       <h3 class="text-xl font-semibold mb-4">Atividades recentes</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-gray-800 p-5 rounded-xl shadow hover:bg-gray-700 transition">
           <p class="text-sm text-gray-300">
             Você comentou: <em>"Gostei bastante dessa proposta!"</em>
@@ -62,27 +93,39 @@
     <!-- Sugestões de usuários -->
     <div>
       <h3 class="text-xl font-semibold mb-4">Sugestões para seguir</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
           *ngFor="let user of suggestedUsers"
           class="bg-gray-800 p-5 rounded-xl shadow hover:bg-gray-700 transition flex items-center justify-between"
         >
           <div class="flex items-center gap-4">
-            <div class="w-12 h-12 flex items-center justify-center bg-gray-700 rounded-full border border-blue-400 text-white text-xl">
+            <div
+              class="w-12 h-12 flex items-center justify-center bg-gray-700 rounded-full border border-blue-400 text-white text-xl">
               <i class="fas fa-user"></i>
             </div>
-
             <div>
-              <p class="font-semibold text-white">{{ user.name }}</p>
-              <p class="text-sm text-gray-400">{{ user.username }}</p>
+              <p class="font-semibold text-white">{{ user.nickname }}</p>
+              <!-- Tag da tribo -->
+              <span
+                *ngIf="user.tribeName; else noTribe"
+                class="inline-block bg-blue-600 bg-opacity-30 text-blue-400 text-xs font-semibold px-3 py-0.5 rounded-full select-none mt-1"
+              >
+            <i class="fas fa-shield-alt mr-1"></i> {{ user.tribeName }}
+          </span>
+              <ng-template #noTribe>
+            <span
+              class="inline-block bg-gray-600 bg-opacity-30 text-gray-400 text-xs font-semibold px-3 py-0.5 rounded-full select-none mt-1">
+              Sem tribo
+            </span>
+              </ng-template>
             </div>
           </div>
           <button
             class="px-4 py-1 text-sm rounded-full font-semibold transition duration-200"
             [ngClass]="{
-              'bg-blue-500 hover:bg-blue-600 text-white': !user.following,
-              'bg-gray-600 hover:bg-gray-500 text-white': user.following
-            }"
+          'bg-blue-500 hover:bg-blue-600 text-white': !user.following,
+          'bg-gray-600 hover:bg-gray-500 text-white': user.following
+        }"
             (click)="toggleFollow(user)"
           >
             {{ user.following ? 'Seguindo' : 'Seguir' }}

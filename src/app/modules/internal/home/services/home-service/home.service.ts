@@ -24,6 +24,10 @@ export class HomeService {
     return this.http.post<any>(this.apiUrl + '/join', {tribeId});
   }
 
+  loadTribeByUserId(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/${userId}`);
+  }
+
 
 
 

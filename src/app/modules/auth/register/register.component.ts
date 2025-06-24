@@ -46,6 +46,7 @@ export class RegisterComponent {
     private toastr: ToastrService
   ) {
     this.registerForm = this.fb.group({
+      nickname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],

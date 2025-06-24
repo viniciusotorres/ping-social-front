@@ -1,0 +1,59 @@
+<app-nav-bar-common
+  (chat)="goToChat()"
+  (profile)="goToProfile()"
+  (notifications)="goToNotifications()"
+  (logoutEvent)="logout()"
+></app-nav-bar-common>
+
+<div class="pt-20 min-h-screen bg-gray-900 text-white px-4">
+  <div class="max-w-4xl mx-auto space-y-10">
+
+    <div>
+      <h2 class="text-2xl font-bold mb-6">Você está seguindo</h2>
+
+      <div *ngIf="following.length > 0; else noFollowing" class="space-y-4">
+        <div
+          *ngFor="let user of following"
+          class="bg-gray-800 p-4 rounded-xl shadow hover:bg-gray-700 transition flex items-center justify-between"
+        >
+          <!-- Avatar e info -->
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 flex items-center justify-center bg-gray-700 rounded-full border border-blue-400 text-white text-xl">
+              <i class="fas fa-user"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-white">{{ user.followedUserName }}</p>
+
+              <!-- Tribo -->
+              <span
+                *ngIf="user.tribeName; else noTribe"
+                class="inline-block bg-blue-600 bg-opacity-30 text-blue-300 text-xs font-semibold px-3 py-0.5 rounded-full mt-1">
+                <i class="fas fa-shield-alt mr-1"></i> {{ user.tribeName }}
+              </span>
+
+              <ng-template #noTribe>
+                <span
+                  class="inline-block bg-gray-600 bg-opacity-30 text-gray-400 text-xs font-semibold px-3 py-0.5 rounded-full mt-1">
+                  Sem tribo
+                </span>
+              </ng-template>
+            </div>
+          </div>
+
+          <!-- Botão parar de seguir -->
+          <button
+            class="px-4 py-1 text-sm rounded-full font-semibold bg-gray-600 hover:bg-red-600 text-white transition duration-200"
+            (click)="unfollow(user)"
+          >
+            Deixar de seguir
+          </button>
+        </div>
+      </div>
+
+      <ng-template #noFollowing>
+        <p class="text-gray-400">Você ainda não está seguindo ninguém.</p>
+      </ng-template>
+    </div>
+  </div>
+</div>

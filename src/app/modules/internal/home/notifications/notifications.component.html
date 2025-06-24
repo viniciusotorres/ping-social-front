@@ -1,4 +1,11 @@
-<div class="min-h-screen bg-gray-900 text-white py-10 px-4">
+<app-nav-bar-common
+  (chat)="goToChat()"
+  (profile)="goToProfile()"
+  (notifications)="goToNotifications()"
+  (logoutEvent)="logout()"
+></app-nav-bar-common>
+
+<div class="pt-20 min-h-screen bg-gray-900 text-white py-10 px-4">
   <div class="max-w-4xl mx-auto space-y-8">
     <!-- Título da página -->
     <div class="flex items-center justify-between border-b border-gray-700 pb-4">

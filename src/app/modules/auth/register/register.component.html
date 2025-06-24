@@ -18,6 +18,23 @@
       </div>
 
       <form [formGroup]="registerForm">
+        <!-- Apelido / Nickname -->
+        <div class="mb-3">
+          <label for="nickname" class="block text-gray-300 mb-1">Apelido</label>
+          <input
+            type="text"
+            id="nickname"
+            formControlName="nickname"
+            class="w-full border rounded-lg p-2 bg-gray-700 text-gray-100"
+            placeholder="Escolha um apelido criativo"
+            [ngClass]="{'border-red-500': registerForm.get('nickname')?.invalid && registerForm.get('nickname')?.touched}"
+          />
+          <small *ngIf="registerForm.get('nickname')?.invalid && registerForm.get('nickname')?.touched" class="text-red-500 block">
+            <span *ngIf="registerForm.get('nickname')?.errors?.['required']">Apelido é obrigatório.</span>
+            <span *ngIf="registerForm.get('nickname')?.errors?.['minlength']">Apelido deve ter pelo menos 3 caracteres.</span>
+          </small>
+        </div>
+
         <!-- Email -->
         <div class="mb-3">
           <label for="email" class="block text-gray-300 mb-1">Email</label>

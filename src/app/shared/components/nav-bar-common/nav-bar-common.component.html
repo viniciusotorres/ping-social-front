@@ -1,0 +1,36 @@
+<!-- Navbar fixa -->
+<nav class="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 shadow z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <!-- Nome do sistema -->
+    <h1 class="text-xl font-bold text-gray-800 dark:text-white">the tribe</h1>
+
+    <!-- Ícones alinhados à direita -->
+    <div (click)="goToHome()" class="flex items-center gap-6 text-gray-700 dark:text-white text-xl">
+      <button aria-label="Feed" class="hover:text-blue-500 transition cursor-pointer">
+        <i class="fas fa-home"></i>
+      </button>
+
+      <button (click)="goToChat()" aria-label="Chat" class="hover:text-blue-500 transition cursor-pointer">
+        <i class="fas fa-comments"></i>
+      </button>
+
+      <button (click)="goToProfile()" aria-label="Perfil" class="hover:text-blue-500 transition cursor-pointer">
+        <i class="fas fa-user"></i>
+      </button>
+
+      <button (click)="goToNotifications()" aria-label="Notificações" class="hover:text-blue-500 transition cursor-pointer">
+        <i class="fas fa-bell"></i>
+      </button>
+
+      @if (showSelectTribe) {
+        <button (click)="openTribeModal()" aria-label="Tribo" class="hover:text-yellow-500 transition cursor-pointer">
+          <i class="fas fa-campground"></i>
+        </button>
+      }
+
+      <button (click)="logout()" aria-label="Sair" class="hover:text-red-600 transition cursor-pointer">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </div>
+</nav>

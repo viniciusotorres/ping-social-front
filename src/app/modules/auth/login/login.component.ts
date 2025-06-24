@@ -81,6 +81,9 @@ export class LoginComponent implements OnInit{
             next: (res) => {
               if (res.token) {
                 localStorage.setItem('authToken', res.token);
+                localStorage.setItem('email', res.email);
+                localStorage.setItem('userId', res.id.toString());
+                localStorage.setItem('nickname', res.nickname);
                 this.toastr.success('Login efetuado com sucesso!', 'Sucesso');
                 this.router.navigate(['/internal']);
               } else if (res.message && res.email) {
