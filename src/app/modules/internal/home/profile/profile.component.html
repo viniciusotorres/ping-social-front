@@ -1,5 +1,4 @@
 <div class="min-h-screen bg-gray-900 text-white py-10 px-4">
-  <!-- Container principal -->
   <div class="max-w-5xl mx-auto space-y-10">
 
     <!-- Header do perfil -->
@@ -7,11 +6,10 @@
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <!-- Info do usuário -->
         <div class="flex items-center gap-5">
-          <img
-            src="https://i.pravatar.cc/120"
-            alt="Avatar do usuário"
-            class="w-28 h-28 rounded-full border-4 border-blue-500 shadow-lg"
-          />
+          <div class="w-12 h-12 flex items-center justify-center bg-gray-700 rounded-full border border-blue-400 text-white text-xl">
+            <i class="fas fa-user"></i>
+          </div>
+
           <div>
             <h2 class="text-3xl font-bold">Admin</h2>
             <p class="text-blue-400 text-sm">admin</p>
@@ -31,10 +29,10 @@
             </div>
           </div>
           <div class="flex gap-3 mt-3">
-            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+            <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium">
               Editar Perfil
             </button>
-            <button class="bg-gray-700 hover:bg-gray-600 text-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition">
+            <button class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-medium">
               Configurações
             </button>
           </div>
@@ -42,7 +40,7 @@
       </div>
     </div>
 
-    <!-- Seção de atividades recentes -->
+    <!-- Atividades recentes -->
     <div>
       <h3 class="text-xl font-semibold mb-4">Atividades recentes</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,10 +51,45 @@
           <span class="text-xs text-gray-500 block mt-1">2 horas atrás</span>
         </div>
         <div class="bg-gray-800 p-5 rounded-xl shadow hover:bg-gray-700 transition">
-          <p class="text-sm text-gray-300">Você seguiu <strong>karla.dev</strong></p>
+          <p class="text-sm text-gray-300">
+            Você seguiu <strong>karla.dev</strong>
+          </p>
           <span class="text-xs text-gray-500 block mt-1">1 dia atrás</span>
         </div>
       </div>
     </div>
+
+    <!-- Sugestões de usuários -->
+    <div>
+      <h3 class="text-xl font-semibold mb-4">Sugestões para seguir</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          *ngFor="let user of suggestedUsers"
+          class="bg-gray-800 p-5 rounded-xl shadow hover:bg-gray-700 transition flex items-center justify-between"
+        >
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 flex items-center justify-center bg-gray-700 rounded-full border border-blue-400 text-white text-xl">
+              <i class="fas fa-user"></i>
+            </div>
+
+            <div>
+              <p class="font-semibold text-white">{{ user.name }}</p>
+              <p class="text-sm text-gray-400">{{ user.username }}</p>
+            </div>
+          </div>
+          <button
+            class="px-4 py-1 text-sm rounded-full font-semibold transition duration-200"
+            [ngClass]="{
+              'bg-blue-500 hover:bg-blue-600 text-white': !user.following,
+              'bg-gray-600 hover:bg-gray-500 text-white': user.following
+            }"
+            (click)="toggleFollow(user)"
+          >
+            {{ user.following ? 'Seguindo' : 'Seguir' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

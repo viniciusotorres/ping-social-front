@@ -4,9 +4,10 @@ import {provideRouter, withComponentInputBinding, withHashLocation} from '@angul
 import { routes } from './app.routes';
 import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
 import { providePrimeNG } from 'primeng/config';
-import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {provideToastr} from 'ngx-toastr';
 import {provideAnimations} from '@angular/platform-browser/animations';
+import {authInterceptor} from './modules/core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,7 +15,7 @@ export const appConfig: ApplicationConfig = {
       provideRouter(routes, withComponentInputBinding(), withHashLocation()),
       provideAnimationsAsync(),
       provideAnimations(),
-      provideHttpClient(),
+      provideHttpClient(withInterceptors([authInterceptor])),
       providePrimeNG({
       ripple: true,
       theme: {
