@@ -1,73 +1,77 @@
-<div class="min-h-screen pt-20 bg-gray-950 text-white py-10 px-4">
-  <div class="max-w-4xl mx-auto">
-
-    <!-- Área para criar novo post -->
-    <div class="mb-8 p-4 bg-gray-800 rounded-lg shadow">
-      <form  #postForm="ngForm" class="space-y-3">
-        <!-- Campo conteúdo do post -->
-        <textarea
-          [(ngModel)]="newPostContent"
-          name="content"
-          required
-          rows="3"
-          placeholder="O que você quer compartilhar?"
-          class="w-full p-3 rounded bg-gray-900 text-white resize-none focus:outline-indigo-500"
-        ></textarea>
-
-        <!-- Botão enviar -->
+<div class="min-h-screen pt-16 bg-gray-950 text-white">
+  <!-- Sticky Header with Post Creator and Filters -->
+  <div class="sticky top-16 z-10 bg-gray-950/90 backdrop-blur-sm border-b border-gray-800">
+    <div class="max-w-4xl mx-auto px-4 py-3 space-y-3">
+      <!-- Compact Post Creator -->
+      <form (ngSubmit)="createPost()" class="flex gap-3 items-end">
+        <div class="flex-1">
+          <textarea
+            [formControl]="postContent"
+            name="content"
+            rows="1"
+            placeholder="O que você quer compartilhar?"
+            class="w-full p-3 rounded-lg bg-gray-800 text-white resize-none border border-gray-700
+                   focus:outline-none focus:ring-1 focus:ring-indigo-500 text-sm min-h-[44px] max-h-[120px]"
+            [class.border-red-500]="postContent.invalid && (postContent.dirty || postContent.touched)"
+          ></textarea>
+          <div *ngIf="postContent.invalid && (postContent.dirty || postContent.touched)"
+               class="text-red-400 text-xs mt-1 px-1">
+            <p *ngIf="postContent.errors?.['required']">Conteúdo obrigatório</p>
+            <p *ngIf="postContent.errors?.['maxlength']">Máximo de 500 caracteres</p>
+          </div>
+        </div>
         <button
           type="submit"
-          [disabled]="postForm.invalid"
-          class="px-5 py-2 rounded bg-indigo-600 hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="postContent.invalid || isLoading"
+          class="mb-1 px-4 py-2 h-fit rounded-lg bg-indigo-600 hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
         >
-          Postar
+          {{ isLoading ? 'Postando...' : 'Postar' }}
         </button>
       </form>
+
+      <!-- Horizontal Scroll Filters -->
+      <div class="flex overflow-x-auto pb-1 gap-2 no-scrollbar">
+        <button
+          *ngFor="let filter of filters"
+          (click)="changeFilter(filter.value)"
+          class="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap"
+          [ngClass]="{
+            'bg-indigo-600 text-white shadow': activeFilter === filter.value,
+            'bg-gray-800 text-gray-300 hover:bg-gray-700': activeFilter !== filter.value
+          }"
+        >
+          {{ filter.label }}
+        </button>
+      </div>
     </div>
+  </div>
 
-    <!-- Tabs -->
-    <div class="flex justify-center mb-6 space-x-4">
-      <button
-        *ngFor="let tab of tabs"
-        (click)="activeTab = tab.key"
-        class="px-4 py-2 rounded-full font-medium transition-all duration-300"
-        [ngClass]="{
-          'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md': activeTab === tab.key,
-          'bg-gray-800 text-gray-400 hover:bg-gray-700': activeTab !== tab.key
-        }"
-      >
-        {{ tab.label }}
-      </button>
-    </div>
-
-    <!-- Feed de conteúdo -->
-    <div class="space-y-6">
-      <ng-container [ngSwitch]="activeTab">
-        <div *ngSwitchCase="'tribe'">
-          <ng-container *ngIf="tribeFeed.length > 0; else noContent">
-            <app-app-post-card *ngFor="let post of tribeFeed" [post]="post"></app-app-post-card>
-          </ng-container>
-        </div>
-
-        <div *ngSwitchCase="'followers'">
-          <ng-container *ngIf="followersFeed.length > 0; else noContent">
-            <app-app-post-card *ngFor="let post of followersFeed" [post]="post"></app-app-post-card>
-          </ng-container>
-        </div>
-
-        <div *ngSwitchCase="'explore'">
-          <ng-container *ngIf="exploreFeed.length > 0; else noContent">
-            <app-app-post-card *ngFor="let post of exploreFeed" [post]="post"></app-app-post-card>
-          </ng-container>
-        </div>
-
-        <ng-template #noContent>
-          <div class="text-center text-gray-400 py-10">
-            <i class="fas fa-box-open text-3xl mb-3"></i>
-            <p class="text-sm">Nada por aqui ainda... mas em breve!</p>
+  <!-- Main Content -->
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <!-- Feed Content -->
+    <div class="space-y-5">
+      @if (!isLoading) {
+        @if (posts.length > 0) {
+          <app-app-post-card
+            *ngFor="let post of posts"
+            [post]="post"
+            class="hover:scale-[1.01] transition-transform duration-200"
+          ></app-app-post-card>
+        } @else {
+          <div class="text-center text-gray-400 py-16">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 mx-auto mb-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-sm">Nenhum post encontrado</p>
+            <p class="text-xs mt-1 text-gray-500">Seja o primeiro a compartilhar algo!</p>
           </div>
-        </ng-template>
-      </ng-container>
+        }
+      } @else {
+        <div class="text-center py-16">
+          <div class="inline-block animate-spin rounded-full h-9 w-9 border-[3px] border-indigo-500 border-t-transparent mb-3"></div>
+          <p class="text-gray-400 text-sm">Carregando posts...</p>
+        </div>
+      }
     </div>
   </div>
 </div>

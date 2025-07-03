@@ -1,103 +1,120 @@
-import { Component } from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {AppPostCardComponent} from '../../../../shared/components/app-post-card/app-post-card.component';
-import {FormsModule} from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AppPostCardComponent } from '../../../../shared/components/app-post-card/app-post-card.component';
+import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
+import { PostFilterType } from '../../../core/enums/PostFilterType';
+import { FeedService, PostRequest, ResponsePost } from '../services/feed-service/feed.service';
+import {HomeService} from '../services/home-service/home.service';
 
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, AppPostCardComponent, FormsModule],
+  imports: [CommonModule, AppPostCardComponent, FormsModule, ReactiveFormsModule],
   templateUrl: './feed.component.html',
-  styleUrl: './feed.component.scss'
+  styleUrls: ['./feed.component.scss']
 })
-export class FeedComponent {
-  activeTab: string = 'tribe';
-  newPostContent: string = '';
+export class FeedComponent implements OnInit {
+  isLoading = false;
+  currentUserId: number | null = null;
+  tribes: any[] = [];
+  tribesMap: { [key: number]: string } = {};
 
-  tabs = [
-    { key: 'tribe', label: 'Minha Tribo' },
-    { key: 'followers', label: 'Seguidores' },
-    { key: 'explore', label: 'Explorar' }
-  ];
-  tribeFeed = [
-    {
-      user: {
-        avatar: 'https://i.pravatar.cc/150?img=21',
-        nickname: 'karla.dev',
-      },
-      content: 'Bem-vindos à tribo! Estamos construindo algo incrível juntos.',
-      createdAt: '2025-06-24T10:30:00',
-    },
-    {
-      user: {
-        avatar: 'https://i.pravatar.cc/150?img=22',
-        nickname: 'lucas.code',
-      },
-      content: 'Acabei de publicar um novo artigo sobre arquitetura de software!',
-      createdAt: '2025-06-23T15:12:00',
-    },
-    {
-      user: {
-        avatar: 'https://i.pravatar.cc/150?img=23',
-        nickname: 'clara.tech',
-      },
-      content: 'Qual a stack preferida da galera por aqui?',
-      createdAt: '2025-06-22T18:00:00',
-    }
+  // FormControl para o conteúdo do post
+  postContent = new FormControl('', [
+    Validators.required,
+    Validators.minLength(1),
+    Validators.maxLength(500)
+  ]);
+
+  // Controles de filtro/tab unificados
+  activeFilter: PostFilterType = PostFilterType.ALL;
+  filters = [
+    { value: PostFilterType.ALL, label: 'Todos' },
+    { value: PostFilterType.MY_POSTS, label: 'Meus Posts' },
+    { value: PostFilterType.TRIBE_POSTS, label: 'Minha Tribo' },
+    { value: PostFilterType.FRIENDS_POSTS, label: 'Amigos' }
   ];
 
-  followersFeed = [
-    {
-      user: {
-        avatar: 'https://i.pravatar.cc/150?img=24',
-        nickname: 'joao.dev',
-      },
-      content: 'Iniciando um novo projeto open source, quem topa colaborar?',
-      createdAt: '2025-06-24T08:15:00',
-    },
-    {
-      user: {
-        avatar: 'https://i.pravatar.cc/150?img=25',
-        nickname: 'bia.codes',
-      },
-      content: 'Feliz por ter batido a meta de commits da semana 🎯',
-      createdAt: '2025-06-23T20:50:00',
-    },
-    {
-      user: {
-        avatar: 'https://i.pravatar.cc/150?img=26',
-        nickname: 'marco.build',
-      },
-      content: 'Dica rápida sobre performance com Angular: lazy load tudo!',
-      createdAt: '2025-06-22T11:03:00',
-    }
-  ];
+  // Feed de posts
+  posts: ResponsePost[] = [];
 
-  exploreFeed = [
-    {
-      user: {
-        avatar: 'https://i.pravatar.cc/150?img=27',
-        nickname: 'ana.uiux',
-      },
-      content: 'Tô reformulando meu portfólio, feedbacks são bem-vindos!',
-      createdAt: '2025-06-24T13:40:00',
-    },
-    {
-      user: {
-        avatar: 'https://i.pravatar.cc/150?img=28',
-        nickname: 'ricardo.qa',
-      },
-      content: 'Testes automatizados salvaram minha vida hoje!',
-      createdAt: '2025-06-23T09:30:00',
-    },
-    {
-      user: {
-        avatar: 'https://i.pravatar.cc/150?img=29',
-        nickname: 'livia.front',
-      },
-      content: 'Vocês usam Tailwind? Estou amando a liberdade criativa 🔥',
-      createdAt: '2025-06-22T17:20:00',
-    }
-  ];
+  constructor(private feedService: FeedService, private homeService: HomeService ) {}
 
+  ngOnInit(): void {
+    this.loadCurrentUser();
+    this.loadPosts();
+  }
+
+  private loadCurrentUser(): void {
+    const userId = localStorage.getItem('userId');
+    this.currentUserId = userId ? Number(userId) : null;
+  }
+
+  changeFilter(filter: PostFilterType): void {
+    this.activeFilter = filter;
+    this.loadPosts();
+  }
+
+  loadPosts(): void {
+    if (!this.currentUserId) return;
+
+    this.isLoading = true;
+    this.feedService.getPosts(this.currentUserId, this.activeFilter)
+      .pipe(
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe({
+        next: (response) => {
+          this.posts = response.items || [];
+        },
+        error: (err) => {
+          console.error('Erro ao carregar posts:', err);
+          this.posts = [];
+        }
+      });
+  }
+
+  loadTribeByUserId(): void {
+    const userId = Number(localStorage.getItem('userId'));
+    this.homeService.loadTribeByUserId(userId).subscribe({
+      next: (res) => {
+        console.log('Tribos do usuário carregadas:', res);
+        if (res?.items?.length > 0) {
+          this.tribes = res.items.map((tribe: any) => tribe.name);
+        } else {
+          this.tribes = [];
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar tribos do usuário:', err);
+        this.tribes = [];
+      }
+    });
+  }
+
+  createPost(): void {
+    if (this.postContent.invalid || !this.currentUserId) return;
+
+    const postData: PostRequest = {
+      userId: this.currentUserId,
+      content: this.postContent.value!,
+      tribeIds: []
+    };
+
+    this.isLoading = true;
+    this.feedService.createPost(postData)
+      .pipe(
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe({
+        next: (newPost) => {
+          this.posts.unshift(newPost);
+          this.postContent.reset();
+        },
+        error: (err) => {
+          console.error('Erro ao criar post:', err);
+        }
+      });
+  }
 }
