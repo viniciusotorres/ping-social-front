@@ -171,6 +171,14 @@
               {{ user.countFollowers || 0 | i18nPlural: followersMapping }}
             </p>
 
+            <p class="text-xs text-gray-400 flex items-center justify-center gap-1">
+              <i class="fas fa-map-marker-alt"></i>
+              {{ formatDistance(user.distanceFromUser) }}
+            </p>
+
+
+
+
             <!-- Tribos -->
             <div class="flex flex-wrap justify-center gap-1 mt-1">
               <ng-container *ngIf="user.namesTribes?.length > 0; else noTribe">

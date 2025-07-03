@@ -86,6 +86,13 @@ export class LoginComponent implements OnInit{
                 localStorage.setItem('nickname', res.nickname);
                 this.toastr.success('Login efetuado com sucesso!', 'Sucesso');
                 this.router.navigate(['/internal']);
+                this.loginService.saveLocation({latitude, longitude}).subscribe(
+                  () => console.log('Localização salva com sucesso.'),
+                  (err) => {
+                    console.error('Erro ao salvar localização:', err);
+                    this.toastr.error('Erro ao salvar localização.', 'Erro');
+                  }
+                );
               } else if (res.message && res.email) {
                 this.toastr.info(res.message, 'Atenção');
                 localStorage.setItem('email', res.email);

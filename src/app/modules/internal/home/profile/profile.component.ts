@@ -44,6 +44,12 @@ export class ProfileComponent {
     other: '# seguidores',
   };
 
+  distanciaMapping: { [k: string]: string } = {
+    '=0': 'Próximo a você',
+    '=1': ' 1 km',
+    other: '# km',
+  }
+
   constructor(
     private profileService: ProfileService,
     private loginService: LoginService,
@@ -164,6 +170,24 @@ export class ProfileComponent {
   goToFollowingUsers(): void {
     this.router.navigate(['/internal/following']);
   }
+
+  formatDistance(distance: number): string {
+    if (distance === 0) {
+      return 'Você está muito próximo a este usuário';
+    } else if (distance < 0.05) {
+      return 'Bem pertinho de você';
+    } else if (distance < 1) {
+      const meters = Math.round(distance * 1000);
+      return `${meters} metro${meters > 1 ? 's' : ''} de você`;
+    } else if (distance < 50) {
+      return `${distance.toFixed(1)} km de você`;
+    } else {
+      return 'Esse usuário está longe de você';
+    }
+  }
+
+
+
 
   /**
    * Realiza o logout do usuário, limpando localStorage e redirecionando para login.
