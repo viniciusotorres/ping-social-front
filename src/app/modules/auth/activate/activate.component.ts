@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
@@ -6,8 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { MessageService } from 'primeng/api';
-import {ActivateService} from '../services/activate-service/activate.service';
-import {ToastrService} from 'ngx-toastr';
+import { ActivateService } from '../services/activate-service/activate.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-activate',
@@ -24,6 +24,8 @@ import {ToastrService} from 'ngx-toastr';
   providers: [MessageService]
 })
 export class ActivateComponent implements OnInit {
+  @ViewChildren('digitInput') digitInputs!: QueryList<ElementRef>;
+
   isLoading = false;
   errorMessage = '';
   email = '';
@@ -49,32 +51,48 @@ export class ActivateComponent implements OnInit {
     this.email = localStorage.getItem('email') || '';
   }
 
+  ngAfterViewInit() {
+    // Foca no primeiro campo quando a view é carregada
+    this.focusInput(0);
+  }
+
+  focusInput(index: number) {
+    setTimeout(() => {
+      if (this.digitInputs && this.digitInputs.toArray()[index]) {
+        this.digitInputs.toArray()[index].nativeElement.focus();
+      }
+    });
+  }
+
   moveFocus(event: any, currentIndex: number) {
     const input = event.target as HTMLInputElement;
+    const value = input.value;
 
-
-    if (input.value && input.value.length === 1) {
-      const nextInput = document.querySelector<HTMLInputElement>(`input[formControlName='digit${currentIndex + 2}']`);
-      if (nextInput) nextInput.focus();
+    // Permite apenas números
+    if (value && !/^\d+$/.test(value)) {
+      input.value = '';
+      return;
     }
 
-    if (event.key === 'Backspace' && !input.value) {
-      const prevInput = document.querySelector<HTMLInputElement>(`input[formControlName='digit${currentIndex}']`);
-      if (prevInput) prevInput.focus();
+    // Atualiza o form control
+    this.activateForm.get(`digit${currentIndex + 1}`)?.setValue(value);
+
+    // Se um dígito foi digitado, move para o próximo campo
+    if (value && value.length === 1) {
+      const nextIndex = currentIndex + 1;
+      if (nextIndex < 4) {
+        this.focusInput(nextIndex);
+      }
+    }
+
+    // Trata backspace
+    if (event.key === 'Backspace' && !value) {
+      const prevIndex = currentIndex - 1;
+      if (prevIndex >= 0) {
+        this.focusInput(prevIndex);
+      }
     }
   }
-
-  handleBackspace(event: KeyboardEvent, currentIndex: number) {
-    const input = event.target as HTMLInputElement;
-    if (event.key === 'Backspace' && input.value === '') {
-      const prevInput = document.querySelector<HTMLInputElement>(
-        `input[formControlName='digit${currentIndex}']`
-      );
-      if (prevInput) prevInput.focus();
-    }
-  }
-
-
 
   onPaste(event: ClipboardEvent) {
     event.preventDefault();
@@ -88,6 +106,29 @@ export class ActivateComponent implements OnInit {
         digit3: digits[2],
         digit4: digits[3]
       });
+      // Foca no último campo após colar
+      this.focusInput(3);
+    }
+  }
+
+  handleKeyDown(event: KeyboardEvent, currentIndex: number) {
+    const input = event.target as HTMLInputElement;
+
+    // Permite apenas números, backspace e tab
+    if (!/[0-9]|Backspace|ArrowLeft|ArrowRight|Delete|Tab/.test(event.key)) {
+      event.preventDefault();
+      return;
+    }
+
+    // Trata backspace quando o campo está vazio
+    if (event.key === 'Backspace' && input.value === '') {
+      event.preventDefault();
+      const prevIndex = currentIndex - 1;
+      if (prevIndex >= 0) {
+        this.focusInput(prevIndex);
+        // Limpa o valor do campo anterior
+        this.activateForm.get(`digit${prevIndex + 1}`)?.setValue('');
+      }
     }
   }
 
@@ -98,6 +139,7 @@ export class ActivateComponent implements OnInit {
   onSubmit() {
     if (this.activateForm.invalid) {
       this.errorMessage = 'Por favor, preencha todos os dígitos';
+      this.focusInput(0);
       return;
     }
 
@@ -107,23 +149,33 @@ export class ActivateComponent implements OnInit {
     const code = this.getActivationCode();
 
     this.activateService.activate(this.email, code).subscribe({
-      next: (res: string) => {
-        if (res.includes('Usuário ativado com sucesso')) {
-          this.toastr.success(res, 'Sucesso');
+      next: (res: any) => {
+        if (res.success) {
+          this.toastr.success(res.message, 'Sucesso');
           localStorage.removeItem('email');
           this.router.navigate(['/internal']);
         } else {
-          this.toastr.error(res, 'Erro');
+          // Mostra toast de erro apenas se houver mensagem de erro
+          if (res.message) {
+            this.toastr.error(res.message, 'Erro');
+          } else {
+            this.toastr.error('Ocorreu um erro ao ativar sua conta', 'Erro');
+          }
           this.activateForm.reset();
-          document.getElementById('digit1')?.focus();
+          this.focusInput(0);
         }
       },
       error: (err) => {
-        this.toastr.error(err.error?.message || 'Falha ao ativar a conta. Tente novamente.', 'Erro');
+        // Trata diferentes formatos de erro
+        const errorMsg = err.error?.message ||
+          err.message ||
+          'Falha ao ativar a conta. Tente novamente.';
+        this.toastr.error(errorMsg, 'Erro');
+        this.focusInput(0);
       },
-      complete: () => this.isLoading = false
+      complete: () => {
+        this.isLoading = false;
+      }
     });
-
   }
-
 }

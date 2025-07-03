@@ -11,10 +11,8 @@ export class ActivateService {
 
   constructor(private http: HttpClient) { }
 
-  activate(email: string, code: string): Observable<string> {
-    return this.http.post(`${this.apiUrl}?email=${email}&code=${code}`, {}, {
-      responseType: 'text'
-    });
+  activate(email: string, code: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}?email=${email}&code=${code}`, {});
   }
 
 }

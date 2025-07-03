@@ -22,20 +22,32 @@
           <label class="block text-gray-300 mb-2 text-center">Digite o código de ativação</label>
           <div class="flex justify-center gap-3">
             <input *ngFor="let i of [0,1,2,3]; let idx = index"
+                   #digitInput
                    type="text"
                    maxlength="1"
                    class="w-12 h-12 text-center text-xl border rounded-lg bg-gray-700 text-gray-100"
                    [formControlName]="'digit' + (idx + 1)"
                    (input)="moveFocus($event, idx)"
-                   (keydown)="handleBackspace($event, idx)"
+                   (keydown)="handleKeyDown($event, idx)"
                    (paste)="onPaste($event)">
           </div>
           <small *ngIf="errorMessage" class="text-red-500 block text-center mt-2">{{errorMessage}}</small>
         </div>
 
         <!-- Botão de ativação -->
-        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-                [disabled]="activateForm.invalid">Ativar Conta</button>
+        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 flex justify-center items-center"
+                [disabled]="activateForm.invalid || isLoading">
+          <ng-container *ngIf="!isLoading; else loadingTemplate">
+            Ativar Conta
+          </ng-container>
+
+          <ng-template #loadingTemplate>
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </ng-template>
+        </button>
 
         <!-- Reenviar código -->
         <div class="text-center mt-4">
