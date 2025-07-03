@@ -10,152 +10,200 @@
   <div class="max-w-6xl mx-auto space-y-12">
     <!-- Info do usuário + Estatísticas -->
     <div
-      class="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between gap-6 md:gap-10 items-start md:items-center">
+      class="bg-gray-800 p-4 md:p-6 rounded-2xl shadow-lg flex flex-col md:flex-row md:justify-between gap-4 md:gap-8">
 
-      <!-- Avatar + Info -->
-      <div class="flex items-start gap-5 w-full md:w-auto">
+      <!-- Bloco: Avatar + Dados -->
+      <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center sm:items-start">
         <!-- Avatar -->
-        <div class="w-16 h-16 flex items-center justify-center bg-gray-700 rounded-full border border-blue-400 text-white text-2xl">
-          {{ getInitials(nickname) }}
+        <div
+          class="w-14 aspect-square flex-shrink-0 flex items-center justify-center bg-gray-700 rounded-full border border-blue-400 text-white text-xl">
+          {{ avatarInitials }}
         </div>
 
         <!-- Dados -->
-        <div class="flex flex-col justify-center">
-          <h2 class="text-2xl font-bold">{{ nickname }}</h2>
-          <p class="text-blue-400 text-sm mb-1">Perfil</p>
+        <div class="flex flex-col text-center sm:text-left items-center sm:items-start">
+          <h2 class="text-xl font-semibold leading-tight">{{ nickname }}</h2>
+          <p class="text-blue-400 text-xs mb-0.5">Perfil</p>
+
+          <!-- Dias ativo -->
+          <p class="text-gray-400 text-xs mb-1 text-center sm:text-left">
+            {{
+              daysActive === 0
+                ? 'Você chegou hoje. Seja bem-vindo!'
+                : daysActive === 1
+                  ? 'Você está aqui há 1 dia. Começo de jornada!'
+                  : 'Você está com a gente há ' + daysActive + ' dias. Que honra ter você aqui!'
+            }}
+          </p>
 
           <!-- Badges de tribos -->
-          <div *ngIf="tribes.length > 0; else noTribe" class="flex flex-wrap gap-2 mt-1">
-        <span
-          *ngFor="let tribe of tribes"
-          class="inline-flex items-center gap-2 bg-blue-500 bg-opacity-20 text-blue-300 px-3 py-1 rounded-full text-xs font-medium select-none"
-        >
-          <i class="fas fa-shield-alt text-sm"></i> {{ tribe }}
-        </span>
+          <div *ngIf="tribes.length > 0; else noTribe"
+               class="flex flex-wrap justify-center sm:justify-start gap-1.5 mt-1">
+  <span
+    *ngFor="let tribe of tribes"
+    class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium select-none"
+    [ngClass]="getTribeClass(tribe)">
+    <i class="fas fa-shield-alt text-[11px]"></i> {{ tribe }}
+  </span>
           </div>
+
 
           <ng-template #noTribe>
             <div
-              class="inline-flex items-center gap-2 bg-gray-500 bg-opacity-20 text-gray-300 px-3 py-1 rounded-full text-xs font-medium select-none mt-1">
-              <i class="fas fa-shield-alt text-sm"></i>
+              class="inline-flex items-center gap-1.5 bg-gray-500 bg-opacity-20 text-gray-300 px-2.5 py-0.5 rounded-full text-[10px] font-medium select-none mt-1">
+              <i class="fas fa-shield-alt text-[11px]"></i>
               <span>Sem tribo</span>
             </div>
           </ng-template>
         </div>
       </div>
 
-      <!-- Estatísticas + Ações -->
-      <div class="flex flex-col gap-3 w-full md:w-auto items-start md:items-end">
+      <!-- Bloco: Estatísticas + Ações -->
+      <div class="flex flex-col sm:flex-row sm:justify-between gap-3 w-full md:w-auto items-center sm:items-end">
+
         <!-- Estatísticas -->
-        <div class="flex gap-6">
+        <div class="flex gap-4 justify-center sm:justify-end">
           <div class="text-center cursor-pointer" (click)="goToFollowedUsers()">
-            <p class="text-lg font-semibold">{{ countFollowedUsers }}</p>
-            <p class="text-gray-400 text-sm">Seguidores</p>
+            <p class="text-base font-semibold leading-tight">{{ countFollowedUsers }}</p>
+            <p class="text-gray-400 text-xs">Seguidores</p>
           </div>
           <div class="text-center cursor-pointer" (click)="goToFollowingUsers()">
-            <p class="text-lg font-semibold">{{ countFollowingUsers }}</p>
-            <p class="text-gray-400 text-sm">Seguindo</p>
+            <p class="text-base font-semibold leading-tight">{{ countFollowingUsers }}</p>
+            <p class="text-gray-400 text-xs">Seguindo</p>
           </div>
         </div>
 
         <!-- Botões -->
-        <div class="flex gap-3 flex-wrap mt-2">
+        <div class="flex gap-2 flex-wrap justify-center sm:justify-end mt-2 sm:mt-0">
           <button
-            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap">
-            Editar Perfil
+            class="bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap">
+            Editar
           </button>
           <button
-            class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap">
-            Configurações
+            class="bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap">
+            Configs
           </button>
         </div>
       </div>
     </div>
-
 
     <!-- Atividades recentes -->
     <div>
       <h3 class="text-xl font-semibold mb-4">Atividades recentes</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-gray-800 p-5 rounded-xl shadow hover:bg-gray-700 transition">
-          <p class="text-sm text-gray-300">
-            Você comentou: <em>"Gostei bastante dessa proposta!"</em>
-          </p>
-          <span class="text-xs text-gray-500 block mt-1">2 horas atrás</span>
+
+      <div class="flex flex-col gap-4 md:grid md:grid-cols-2">
+        <!-- Item 1 - Comentário -->
+        <div class="flex items-start gap-3 bg-gray-800 p-4 rounded-xl shadow hover:bg-gray-700 transition group">
+          <!-- Ícone -->
+          <div class="text-blue-400 text-xl mt-1 animate-bounce-slow">💬</div>
+
+          <!-- Conteúdo -->
+          <div class="flex-1">
+            <p class="text-sm text-gray-200">
+              Você comentou:
+              <em class="text-gray-300">"Gostei bastante dessa proposta!"</em>
+            </p>
+            <span class="text-xs text-gray-500 block mt-1">2 horas atrás</span>
+          </div>
         </div>
-        <div class="bg-gray-800 p-5 rounded-xl shadow hover:bg-gray-700 transition">
-          <p class="text-sm text-gray-300">
-            Você seguiu <strong>karla.dev</strong>
-          </p>
-          <span class="text-xs text-gray-500 block mt-1">1 dia atrás</span>
+
+        <!-- Item 2 - Seguindo -->
+        <div class="flex items-start gap-3 bg-gray-800 p-4 rounded-xl shadow hover:bg-gray-700 transition group">
+          <!-- Ícone -->
+          <div class="text-green-400 text-xl mt-1 animate-pulse">👥</div>
+
+          <!-- Conteúdo -->
+          <div class="flex-1">
+            <p class="text-sm text-gray-200">
+              Você começou a seguir
+              <strong class="text-white">karla.dev</strong>
+            </p>
+            <span class="text-xs text-gray-500 block mt-1">1 dia atrás</span>
+          </div>
+        </div>
+
+        <!-- Item 3 - Novo post -->
+        <div class="flex items-start gap-3 bg-gray-800 p-4 rounded-xl shadow hover:bg-gray-700 transition group">
+          <!-- Ícone -->
+          <div class="text-yellow-400 text-xl mt-1">📢</div>
+
+          <!-- Conteúdo -->
+          <div class="flex-1">
+            <p class="text-sm text-gray-200">
+              Você publicou um novo tópico:
+              <strong class="text-white">"Ideias para nosso próximo projeto"</strong>
+            </p>
+            <span class="text-xs text-gray-500 block mt-1">3 dias atrás</span>
+          </div>
         </div>
       </div>
     </div>
+
 
     <!-- Sugestões de usuários -->
     <div>
       <h3 class="text-2xl font-bold text-white mb-6">Sugestões para seguir</h3>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Container horizontal scroll -->
+      <div
+        class="flex overflow-x-auto gap-6 pb-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-blue-600 scrollbar-track-gray-700"
+      >
         <div
           *ngFor="let user of suggestedUsers"
-          class="bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 p-5 flex items-center gap-5"
+          class="bg-gray-800 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 p-5 flex flex-col items-center gap-4 min-w-[280px] snap-center flex-shrink-0"
         >
           <!-- Avatar -->
-          <div class="aspect-square w-14 min-w-14 max-w-14 flex items-center justify-center
-     bg-gradient-to-br from-blue-500 to-indigo-500
-     rounded-full border-2 border-white shadow-md
-     text-white text-xl shrink-0">
-            {{ getInitials(user.nickname) }}
+          <div
+            class="w-14 aspect-square flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full border-2 border-white shadow-md text-white text-xl"
+          >
+            {{ user.avatarInitials }}
           </div>
 
-
-          <!-- Conteúdo principal -->
-          <div class="flex-1">
+          <!-- Conteúdo -->
+          <div class="flex flex-col text-center items-center gap-1 w-full">
+            <!-- Nome -->
             <p class="text-lg font-semibold text-white leading-tight">
               {{ user.nickname }}
             </p>
 
-            <p class="text-xs text-gray-400 mt-1">
-              {{ user.followersCount || 0 | i18nPlural: followersMapping }}
+            <!-- Seguidores -->
+            <p class="text-xs text-gray-400">
+              {{ user.countFollowers || 0 | i18nPlural: followersMapping }}
             </p>
 
             <!-- Tribos -->
-            <div class="mt-2">
-              <ng-container *ngIf="user.tribes?.length > 0; else noTribe">
-                <div class="flex flex-wrap gap-1">
-              <span
-                *ngFor="let tribe of user.tribes"
-                class="bg-blue-600/20 text-blue-300 text-[11px] font-medium px-2 py-0.5 rounded-full"
-                [title]="tribe.description"
-              >
-                <i class="fas fa-shield-alt mr-1"></i> {{ tribe.name }}
-              </span>
-                </div>
+            <div class="flex flex-wrap justify-center gap-1 mt-1">
+              <ng-container *ngIf="user.namesTribes?.length > 0; else noTribe">
+            <span
+              *ngFor="let tribe of user.namesTribes"
+              class="text-[11px] font-medium px-2 py-0.5 rounded-full"
+              [ngClass]="getTribeClass(tribe)"
+              [title]="tribe"
+            >
+              <i class="fas fa-shield-alt mr-1"></i> {{ tribe }}
+            </span>
               </ng-container>
               <ng-template #noTribe>
             <span
-              class="inline-block bg-gray-600/30 text-gray-400 text-[11px] font-medium px-2 py-0.5 rounded-full mt-1"
+              class="inline-block bg-gray-600/30 text-gray-400 text-[11px] font-medium px-2 py-0.5 rounded-full"
             >
               Sem tribo
             </span>
               </ng-template>
             </div>
-          </div>
 
-          <!-- Botão seguir -->
-          <div class="ml-3">
+            <!-- Botão -->
             <button
-              class="px-4 py-1 text-sm font-semibold rounded-full flex items-center justify-center transition duration-200"
+              class="mt-3 px-4 py-1 text-sm font-semibold rounded-full flex items-center justify-center transition duration-200 w-fit"
               [disabled]="loadingFollow[user.id]"
               [ngClass]="{
-            'bg-blue-500 hover:bg-blue-600 text-white': !user.following,
-            'bg-gray-600 hover:bg-gray-500 text-white': user.following
+            'bg-blue-500 hover:bg-blue-600 text-white': !user.isFollowing,
+            'bg-gray-600 hover:bg-gray-500 text-white': user.isFollowing
           }"
               (click)="toggleFollow(user)"
             >
               <ng-container *ngIf="!loadingFollow[user.id]; else loading">
-                {{ user.following ? 'Seguindo' : 'Seguir' }}
+                {{ user.isFollowing ? 'Seguindo' : 'Seguir' }}
               </ng-container>
               <ng-template #loading>
                 <svg
@@ -185,5 +233,4 @@
       </div>
     </div>
 
-  </div>
-</div>
+

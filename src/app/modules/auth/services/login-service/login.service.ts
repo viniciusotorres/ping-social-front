@@ -7,13 +7,17 @@ import {Observable} from 'rxjs';
   providedIn: 'root'
 })
 export class LoginService {
-  private readonly apiUrl = environment.apiUrl + '/users/login';
+  private readonly apiUrl = environment.apiUrl + '/users';
 
 
   constructor(private http: HttpClient) {
   }
 
   login(email: string, password: string): Observable<any> {
-    return this.http.post<any>(this.apiUrl, {email, password});
+    return this.http.post<any>(this.apiUrl + '/login', {email, password});
+  }
+
+  getMyInfo(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + `/myInfo/${localStorage.getItem('userId')}`);
   }
 }

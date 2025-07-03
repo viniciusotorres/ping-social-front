@@ -33,6 +33,6 @@ export class ProfileService {
   }
 
   getSuggestedUsers(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrlUsers}/list`);
+    return this.http.get<any>(`${this.apiUrlUsers}/suggestionsUsers`);
   }
 }
