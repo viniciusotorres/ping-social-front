@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import {ForgotService} from '../services/forgot-service/forgot.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -19,28 +20,34 @@ export class ResetPasswordComponent implements OnInit {
   isLoading = false;
   email = '';
   token = '';
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private forgotService: ForgotService
   ) {
     this.resetPasswordForm = this.fb.group({
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      email: [''],
+      code: ['', Validators.required],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     }, { validators: this.passwordsMatchValidator });
   }
 
   ngOnInit(): void {
-    this.email = this.route.snapshot.queryParamMap.get('email') || '';
-    this.token = this.route.snapshot.queryParamMap.get('token') || '';
+    const storedEmail = sessionStorage.getItem('email');
+    this.resetPasswordForm.get('email')?.setValue(storedEmail);
   }
 
   passwordsMatchValidator(group: FormGroup) {
-    const password = group.get('password')?.value;
+    const newPassword = group.get('newPassword')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { mismatch: true };
+    return newPassword === confirmPassword ? null : { mismatch: true };
   }
 
   onSubmit() {
@@ -50,12 +57,23 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const { password } = this.resetPasswordForm.value;
+    const { email, code, newPassword } = this.resetPasswordForm.value;
 
-    setTimeout(() => {
-      this.isLoading = false;
-      this.toastr.success('Senha redefinida com sucesso!', 'Sucesso');
-      this.router.navigate(['/auth/login']);
-    }, 1500);
+    this.forgotService.resetPassword(email, code, newPassword).subscribe({
+      next: (res: any) => {
+        this.toastr.success(res.message, 'Sucesso');
+        sessionStorage.removeItem('email');
+        this.router.navigate(['/auth/login']);
+      },
+      error: (error) => {
+        this.toastr.error(error.error.message || 'An error occurred. Please try again.');
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+
+
   }
 }

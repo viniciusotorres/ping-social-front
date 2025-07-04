@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import {ForgotService} from '../services/forgot-service/forgot.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -17,7 +18,8 @@ export class ForgotPasswordComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private forgotService: ForgotService
   ) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
@@ -32,12 +34,22 @@ export class ForgotPasswordComponent {
 
     this.isLoading = true;
     const { email } = this.forgotPasswordForm.value;
+    const emailUser = this.forgotPasswordForm.get('email')?.value;
 
-    // Simulação de chamada de API
-    setTimeout(() => {
-      this.toastr.success('Instruções de recuperação enviadas para o e-mail.', 'Sucesso');
-      this.router.navigate(['/auth/login']);
-      this.isLoading = false;
-    }, 1500);
+    sessionStorage.setItem('email', emailUser);
+
+    this.forgotService.forgotPassword(email).subscribe({
+      next: (res: any) => {
+        this.toastr.success(res.message, 'Sucesso');
+        this.router.navigate(['/auth/reset-password']);
+      },
+      error: (error) => {
+        this.toastr.error(error.error.message || 'An error occurred. Please try again.');
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 }
