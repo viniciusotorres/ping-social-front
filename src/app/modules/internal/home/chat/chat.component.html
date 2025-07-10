@@ -85,12 +85,12 @@
         <!-- Mensagem do outro usuário -->
         <div *ngIf="msg.sender !== currentUserEmail; else myMessage" class="flex items-start gap-3 justify-start">
           <div
-            class="w-9 h-9 rounded-full border-2 border-green-400 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-bold"
+            class="w-9 h-9 rounded-full border-2 border-green-400 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-bold shrink-0"
           >
             {{ getAvatarInitials(nicknameSelected) }}
           </div>
-          <div class="bg-gray-700 p-4 rounded-2xl rounded-tl-none max-w-xs shadow">
-            <p class="text-sm">{{ msg.text }}</p>
+          <div class="bg-gray-700 p-4 rounded-2xl rounded-tl-none max-w-xs shadow overflow-hidden break-words flex-1">
+            <p class="text-sm">{{ msg.text }}</p> <!-- Quebra de palavras longas -->
             <span class="block text-xs text-gray-400 mt-1">{{ nicknameSelected }} • {{ msg.timestamp || msg.time }}</span>
           </div>
         </div>
@@ -99,22 +99,20 @@
         <ng-template #myMessage>
           <div class="flex items-end justify-end gap-3 w-full">
             <div
-              class="bg-blue-600 p-4 rounded-2xl rounded-tr-none max-w-xs shadow text-white text-right"
+              class="bg-blue-600 p-4 rounded-2xl rounded-tr-none max-w-xs shadow text-white text-right overflow-hidden break-words flex-1"
             >
-              <p class="text-sm">{{ msg.text }}</p>
+              <p class="text-sm">{{ msg.text }}</p> <!-- Quebra de palavras longas -->
               <span class="block text-xs text-gray-200 mt-1">Você • {{ msg.timestamp || msg.time }}</span>
             </div>
             <div
-              class="w-9 h-9 rounded-full border-2 border-green-400 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-bold"
+              class="w-9 h-9 rounded-full border-2 border-green-400 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-bold shrink-0"
             >
               {{ getAvatarInitials(currentUserNickname) }}
             </div>
           </div>
         </ng-template>
-
-
-        <div *ngIf="msg === filteredMessages()[filteredMessages().length - 1]" #lastMessage></div>
       </div>
+
     </ng-container>
 
     <ng-template #noUserSelected>
@@ -123,6 +121,7 @@
       </p>
     </ng-template>
   </main>
+
   <!-- CAMPO DE ENVIO FIXO -->
   <form
     (submit)="sendMessage()"

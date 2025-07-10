@@ -30,6 +30,7 @@ export class WebSocketService implements OnDestroy {
   private subscription?: StompSubscription;
 
   private readonly enableLogs = true; // toggle para logs
+  private readonly apiSocketUrl = 'https://ping-social-1.onrender.com/ws';
 
   connect(username: string): void {
     if (this.isConnected) {
@@ -39,7 +40,7 @@ export class WebSocketService implements OnDestroy {
 
     this.username = username;
     const token = localStorage.getItem('authToken') || '';
-    const socket = new SockJS(`http://localhost:8080/ws?token=${token}`);
+    const socket = new SockJS(this.apiSocketUrl + `?token=${token}`)
 
     if (!token) {
       console.warn('[WebSocket] Conexão bloqueada: token ausente.');
