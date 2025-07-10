@@ -1,4 +1,3 @@
-
 <app-nav-bar-common
   (chat)="goToChat()"
   (profile)="goToProfile()"
@@ -6,63 +5,143 @@
   (logoutEvent)="logout()"
 ></app-nav-bar-common>
 
-<div class="pt-20 flex flex-col h-screen bg-gray-900 text-white">
-  <!-- Navbar do chat -->
-  <div class="bg-gray-800 p-4 flex items-center justify-between shadow relative">
-    <h2 class="text-lg font-semibold">Chat</h2>
+<div class="flex flex-col h-screen bg-gray-900 text-white pt-10">
+  <!-- HEADER MODERNO -->
+  <header class="bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700 sticky top-0 z-20">
+    <ng-container *ngIf="selectedUser; else userSelectDropdown">
+      <div class="flex items-center gap-3">
+        <button (click)="deselectUser()" class="text-white text-lg hover:text-gray-300">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full border-2 border-green-400 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-bold">
+            {{ getAvatarInitials(nicknameSelected) }}
+          </div>
+          <div>
+            <p class="text-white font-semibold">{{ nicknameSelected }}</p>
+            <span class="text-xs text-green-400">Online</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
 
-    <!-- Dropdown de usuários online -->
-    <div class="relative">
-      <button (click)="toggleUserList()" class="text-sm text-green-400 flex items-center gap-1">
-        {{ onlineUsers.length }} online
-        <i class="fas fa-chevron-down text-xs"></i>
+    <!-- Dropdown para selecionar usuário -->
+    <ng-template #userSelectDropdown>
+      <div class="relative ml-auto">
+        <button
+          (click)="toggleUserDropdown()"
+          class="text-white hover:text-green-400 transition-all mr-3"
+          title="Selecionar usuário para conversar"
+        >
+          <i class="fas fa-user-friends"></i>
+        </button>
+
+        <div *ngIf="showUserDropdown" class="absolute right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+          <div class="p-2 border-b border-gray-700">
+            <input
+              type="text"
+              [(ngModel)]="userSearch"
+              placeholder="Buscar usuário..."
+              class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none"
+            />
+          </div>
+          <ul class="max-h-60 overflow-y-auto divide-y divide-gray-700">
+            <li *ngFor="let user of filteredUserList()" (click)="selectUser(user)"
+                class="px-4 py-2 cursor-pointer hover:bg-gray-700 flex items-center gap-2">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold">
+                {{ user.avatarInitials || user.nickname.charAt(0).toUpperCase() }}
+              </div>
+              <span class="text-sm">{{ user.nickname }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Botões e funcionalidades no canto direito -->
+    <div class="flex gap-4 items-center">
+      <!-- Limpar conversa -->
+      <button (click)="clearChatHistory()" title="Limpar conversa" class="text-white hover:text-red-400 transition-all">
+        <i class="fas fa-trash-alt"></i>
       </button>
 
-      <!-- Lista de usuários online -->
-      <div *ngIf="showUserList" class="absolute right-0 mt-2 w-48 bg-gray-700 rounded-lg shadow-lg z-50">
-        <ul class="divide-y divide-gray-600">
-          <li *ngFor="let user of onlineUsers" class="px-4 py-2 text-sm text-white hover:bg-gray-600">
-            <i class="fas fa-circle text-green-400 text-xs mr-2"></i>{{ user }}
-          </li>
-        </ul>
+      <!-- Configurações -->
+      <button (click)="goToSettings()" title="Configurações" class="text-white hover:text-green-400 transition-all">
+        <i class="fas fa-cog"></i>
+      </button>
+
+    </div>
+  </header>
+
+
+  <main
+    class="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-900"
+    style="max-width: 768px; margin: 0 auto; width: 100%;"
+    (scroll)="onScroll($event)"
+    #scrollContainer
+  >
+    <ng-container *ngIf="selectedUser; else noUserSelected">
+      <div *ngFor="let msg of filteredMessages()" class="w-full">
+        <!-- Mensagem do outro usuário -->
+        <div *ngIf="msg.sender !== currentUserEmail; else myMessage" class="flex items-start gap-3 justify-start">
+          <div
+            class="w-9 h-9 rounded-full border-2 border-green-400 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-bold"
+          >
+            {{ getAvatarInitials(nicknameSelected) }}
+          </div>
+          <div class="bg-gray-700 p-4 rounded-2xl rounded-tl-none max-w-xs shadow">
+            <p class="text-sm">{{ msg.text }}</p>
+            <span class="block text-xs text-gray-400 mt-1">{{ nicknameSelected }} • {{ msg.timestamp || msg.time }}</span>
+          </div>
+        </div>
+
+        <!-- Mensagem do próprio usuário -->
+        <ng-template #myMessage>
+          <div class="flex items-end justify-end gap-3 w-full">
+            <div
+              class="bg-blue-600 p-4 rounded-2xl rounded-tr-none max-w-xs shadow text-white text-right"
+            >
+              <p class="text-sm">{{ msg.text }}</p>
+              <span class="block text-xs text-gray-200 mt-1">Você • {{ msg.timestamp || msg.time }}</span>
+            </div>
+            <div
+              class="w-9 h-9 rounded-full border-2 border-green-400 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-bold"
+            >
+              {{ getAvatarInitials(currentUserNickname) }}
+            </div>
+          </div>
+        </ng-template>
+
+
+        <div *ngIf="msg === filteredMessages()[filteredMessages().length - 1]" #lastMessage></div>
       </div>
-    </div>
-  </div>
+    </ng-container>
 
-  <!-- Área das mensagens -->
-  <div class="flex-1 overflow-y-auto p-4 space-y-3">
-    <!-- Mensagem fixa do Admin -->
-    <div class="max-w-xl bg-gray-700 p-4 rounded-xl border-l-4 border-yellow-400">
-      <p class="text-sm">
-        🛠️ Este chat está em desenvolvimento! Envie sugestões e interaja com a comunidade.
+    <ng-template #noUserSelected>
+      <p class="text-center text-gray-400 mt-10">
+        Selecione um usuário para começar a conversar.
       </p>
-      <span class="text-xs text-gray-300 block mt-1">Admin • {{ adminPostTime }}</span>
-    </div>
-
-    <!-- Loop de mensagens -->
-    <div *ngFor="let msg of messages" [ngClass]="{
-      'bg-blue-600 self-end ml-auto text-right': msg.sender === 'Você',
-      'bg-gray-700': msg.sender !== 'Você'
-    }" class="max-w-xs p-3 rounded-xl">
-      <p class="text-sm">{{ msg.text }}</p>
-      <span class="text-xs text-gray-300 block mt-1">
-        {{ msg.sender }} • {{ msg.time }}
-      </span>
-    </div>
-  </div>
-
-  <!-- Campo de digitação -->
-  <form (submit)="sendMessage()" class="p-4 bg-gray-800 flex items-center gap-3">
+    </ng-template>
+  </main>
+  <!-- CAMPO DE ENVIO FIXO -->
+  <form
+    (submit)="sendMessage()"
+    class="p-4 bg-gray-800 flex items-center gap-4 border-t border-gray-700 sticky bottom-0"
+    style="max-width: 768px; margin: 0 auto; width: 100%;"
+  >
     <input
       [(ngModel)]="message"
       name="message"
       type="text"
       placeholder="Digite sua mensagem..."
-      class="flex-1 px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-none"
+      class="flex-1 px-4 py-3 rounded-lg bg-gray-700 text-white focus:outline-none"
+      [disabled]="!selectedUser"
+      autocomplete="off"
     />
     <button
       type="submit"
-      class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg text-white font-medium"
+      [disabled]="!selectedUser || !message.trim()"
+      class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
     >
       Enviar
     </button>
