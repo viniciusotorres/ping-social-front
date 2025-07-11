@@ -30,7 +30,7 @@ export class WebSocketService implements OnDestroy {
   private subscription?: StompSubscription;
 
   private readonly enableLogs = true; // toggle para logs
-  private readonly apiSocketUrl = 'https://ping-social-1.onrender.com/ws';
+  private readonly apiSocketUrl = 'http:localhost:8080/ws';
 
   connect(username: string): void {
     if (this.isConnected) {

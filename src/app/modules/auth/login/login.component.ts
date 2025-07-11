@@ -43,20 +43,6 @@ export class LoginComponent implements OnInit{
   }
 
   ngOnInit() {
-    setTimeout(() => {
-      const firstToast = this.toastr.warning(
-        'Bem-vindo! Esta é uma versão de teste, por favor envie seu feedback.',
-        'Atenção'
-      );
-
-
-      firstToast.onHidden.subscribe(() => {
-        this.toastr.warning(
-          'As requisições podem demorar devido ao início do desenvolvimento.',
-          'Aviso Importante'
-        );
-      });
-    }, 1000);
   }
 
   onSubmit() {
@@ -113,7 +99,6 @@ export class LoginComponent implements OnInit{
     );
   }
 
-
   proceedLoginWithoutLocation(email: string, password: string) {
     this.loginService.login(email, password)
       .pipe(finalize(() => this.isLoading = false))
@@ -153,7 +138,6 @@ export class LoginComponent implements OnInit{
       }, 100);
     }
   }
-
 
   goToForgotPassword() {
     this.router.navigate(['auth/forgot-password']);
